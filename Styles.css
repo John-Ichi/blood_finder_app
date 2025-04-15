@@ -442,6 +442,14 @@ nav {
     display: block;
 }
 
+.page1 {
+    display: none;
+}
+
+.page1.active {
+    display: block;
+}
+
 .blur-bg-overlay {
     position: fixed;
     top: 0;
@@ -629,8 +637,13 @@ form button:hover {
     margin-right: 7px;
 }
 
-.form-popup .signup {
+.form-popup .signup,
+.form-popup.show-signup .login {
     display: none;
+}
+
+.form-popup.show-signup .signup {
+    display: flex;
 }
 
 @media (max-width: 992px) {
