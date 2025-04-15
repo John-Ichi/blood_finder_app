@@ -1,7 +1,16 @@
 const homePage = document.getElementById('home');
 const loginPage = document.getElementById('login');
 const searchPage = document.getElementById('search');
+const loginSignupLink = document.querySelectorAll(".form-box .bottom-link a");
+const formPopup = document.querySelector(".form-popup");
 const resultsContainer = document.getElementById('resultsContainer');
+
+loginSignupLink.forEach(link => {
+    link.addEventListener("click", (e) => {
+        e.preventDefault();
+        formPopup.classList[link.id === "signup-link" ? 'add' : 'remove']("show-signup");
+    });
+});
 
 document.querySelector('.home-link').addEventListener('click', (e) => {
     e.preventDefault();
@@ -60,3 +69,4 @@ function showPage(pageId) {
     
     document.getElementById(pageId).classList.add('active');
 }
+
