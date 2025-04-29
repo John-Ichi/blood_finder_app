@@ -9,51 +9,57 @@
     <link rel="stylesheet" href="donor-wp.css">
 </head>
 <body>
-    <nav>
-        <a href="#" class="logo">
-            <i class="fas fa-heartbeat"></i>
-            <span>LifeLink</span>
-        </a>
-        <div class="nav-links">
-            <a href="#" data-page="home">Home</a>
-            <a href="#" data-page="donate">Schedule Donation</a>
-            <a href="#" data-page="requests">Blood Requests</a>
-            <a href="#" data-page="profile">My Profile</a>
-        </div>
-        <div class="user-actions">
-            <button class="notification-btn" id="notificationBtn">
-                <i class="fas fa-bell"></i>
-                <span class="notification-badge">3</span>
-            </button>
-            <div class="notification-dropdown" id="notificationDropdown">
-                <div class="notification-header">
-                    <h3>Notifications</h3>
-                    <button class="btn btn-sm btn-outline" id="markAllRead">Mark all as read</button>
-                </div>
-                <div class="notification-item unread">
-                    <h4>New blood request matches your type</h4>
-                    <p>Emergency need for O+ at Philippine General Hospital</p>
-                    <div class="time">10 minutes ago</div>
-                </div>
-                <div class="notification-item unread">
-                    <h4>Your donation is coming up</h4>
-                    <p>Scheduled for May 15 at Philippine Red Cross</p>
-                    <div class="time">2 hours ago</div>
-                </div>
-                <div class="notification-item">
-                    <h4>Thank you for your donation</h4>
-                    <p>Your blood helped save 3 lives last month</p>
-                    <div class="time">3 days ago</div>
-                </div>
-                <div class="notification-footer">
-                    <a href="#">View all notifications</a>
-                </div>
+    <!-- Top Navigation -->
+    <div class="top-nav">
+        <div class="top-nav-content">
+            <a href="#" class="logo">
+                <i class="fas fa-heartbeat"></i>
+                <span>LifeLink</span>
+            </a>
+            <div class="top-nav-links">
+                <a href="#">Home</a>
+                <a href="#">Donor Lists</a>
+                <a href="#">Blood Bank Lists</a>
             </div>
-            <button class="btn btn-outline" id="logoutBtn">Log Out</button>
         </div>
-    </nav>
+    </div>
+    
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <div class="sidebar-content">
+            <div class="user-profile">
+                <h3>Juan Dela Cruz</h3>
+                <p>O+ Blood Type</p>
+            </div>
+            <div class="sidebar-links">
+                <a href="#" data-page="home" class="active">
+                    <i class="fas fa-home"></i>
+                    <span>Home</span>
+                </a>
+                <a href="#" data-page="donate">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>Schedule Donation</span>
+                </a>
+                <a href="#" data-page="requests">
+                    <i class="fas fa-tint"></i>
+                    <span>Blood Requests</span>
+                </a>
+                <a href="#" data-page="profile">
+                    <i class="fas fa-user"></i>
+                    <span>My Profile</span>
+                </a>
+                <a href="#" id="logoutBtn" class="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </a>
+            </div>
+        </div>
+    </div>
 
-    <div class="container">
+    <!-- Main Content Area -->
+    <div class="main-content">
+        <div class="container">
+        <!-- Home Page -->
         <section class="page active" id="home-page">
             <div class="hero">
                 <h1>Save Lives Through Blood Donation</h1>
@@ -65,6 +71,7 @@
             </div>
 
             <div class="dashboard">
+                <!-- Recent Activity Card -->
                 <section class="card">
                     <div class="card-header">
                         <h2>Recent Activity</h2>
@@ -78,7 +85,8 @@
                         <button class="btn btn-primary" style="margin-top: 0.8rem;" data-page="donate">Schedule Next Donation</button>
                     </div>
                 </section>
-
+                
+                <!-- Urgent Requests Card -->
                 <section class="card">
                     <div class="card-header">
                         <h2>Urgent Requests Near You</h2>
@@ -89,6 +97,7 @@
                             <div class="request-info">
                                 <h3>Emergency Request - Type O+</h3>
                                 <p>Philippine General Hospital - Needed by 05/15/2023</p>
+                                <p><i class="fas fa-procedures"></i> Surgery Type: Cardiac Bypass</p>
                                 <p>Distance: 3.2 km from you</p>
                                 <p class="urgent-tag" style="color: var(--primary-dark); font-weight: bold;">URGENT</p>
                             </div>
@@ -101,6 +110,7 @@
                             <div class="request-info">
                                 <h3>Scheduled Surgery - Type A-</h3>
                                 <p>St. Luke's Medical Center - Needed by 05/20/2023</p>
+                                <p><i class="fas fa-procedures"></i> Surgery Type: Hip Replacement</p>
                                 <p>Distance: 5.7 km from you</p>
                             </div>
                             <div class="request-actions">
@@ -116,6 +126,7 @@
             </div>
         </section>
 
+        <!-- Donate Page -->
         <section class="page" id="donate-page">
             <div class="hero">
                 <h1>Schedule Your Donation</h1>
@@ -175,6 +186,7 @@
                                 <label for="healthInfo">Health Information</label>
                                 <textarea id="healthInfo" class="form-control" rows="4" placeholder="Any recent illnesses, medications, etc."></textarea>
                             </div>
+                            
                             <div class="form-actions">
                                 <button type="submit" class="btn btn-primary">Schedule Donation</button>
                                 <button type="button" class="btn btn-outline" data-page="home">Cancel</button>
@@ -185,6 +197,7 @@
             </div>
         </section>
 
+        <!-- Requests Page -->
         <section class="page" id="requests-page">
             <div class="hero">
                 <h1>Blood Requests</h1>
@@ -233,6 +246,7 @@
                             <div class="request-info">
                                 <h3>Emergency Request - Type O+</h3>
                                 <p>Philippine General Hospital - Needed by 05/15/2023</p>
+                                <p><i class="fas fa-procedures"></i> Surgery Type: Cardiac Bypass</p>
                                 <p>Distance: 3.2 km from you</p>
                                 <p class="urgent-tag" style="color: var(--primary-dark); font-weight: bold;">URGENT</p>
                             </div>
@@ -245,6 +259,7 @@
                             <div class="request-info">
                                 <h3>Scheduled Surgery - Type A-</h3>
                                 <p>St. Luke's Medical Center - Needed by 05/20/2023</p>
+                                <p><i class="fas fa-procedures"></i> Surgery Type: Hip Replacement</p>
                                 <p>Distance: 5.7 km from you</p>
                             </div>
                             <div class="request-actions">
@@ -256,6 +271,7 @@
                             <div class="request-info">
                                 <h3>Cancer Treatment - Type AB+</h3>
                                 <p>Makati Medical Center - Needed by 05/25/2023</p>
+                                <p><i class="fas fa-radiation"></i> Surgery Type: Tumor Removal</p>
                                 <p>Distance: 8.1 km from you</p>
                             </div>
                             <div class="request-actions">
@@ -267,6 +283,7 @@
                             <div class="request-info">
                                 <h3>Childbirth - Type B-</h3>
                                 <p>Asian Hospital - Needed by 05/18/2023</p>
+                                <p><i class="fas fa-baby"></i> Surgery Type: Emergency C-Section</p>
                                 <p>Distance: 12.3 km from you</p>
                             </div>
                             <div class="request-actions">
@@ -288,6 +305,7 @@
             </div>
         </section>
 
+        <!-- Profile Page -->
         <section class="page" id="profile-page">
             <div class="hero">
                 <h1>My Profile</h1>
@@ -295,6 +313,7 @@
             </div>
 
             <div class="dashboard">
+            <!-- Personal Information Card -->    
                 <section class="card">
                     <div class="card-header">
                         <h2>Personal Information</h2>
@@ -319,7 +338,7 @@
                         </div>
                         <div class="form-group">
                             <label for="bloodTypeProfile">Blood Type</label>
-                            <select id="bloodTypeProfile" class="form-control" required>
+                            <select id="bloodTypeProfile" class="form-control" disabled>
                                 <option value="O+">O+</option>
                                 <option value="A+">A+</option>
                                 <option value="B+">B+</option>
@@ -329,66 +348,79 @@
                                 <option value="B-">B-</option>
                                 <option value="AB-">AB-</option>
                             </select>
+                            <input type="hidden" name="bloodTypeProfile" value="O+"> 
                         </div>
                         <button type="submit" class="btn btn-primary">Update Profile</button>
                     </form>
                 </section>
 
+                <!-- Donation History Card -->
                 <section class="card">
-                    <div class="card-header">
-                        <h2>Donation History</h2>
-                        <i class="fas fa-history" style="color: var(--primary); font-size: 1.3rem;"></i>
-                    </div>
-                    <ul class="request-list" style="max-height: 350px; overflow-y: auto;">
-                        <li class="request-item">
-                            <div class="request-info">
-                                <h3>March 15, 2023</h3>
-                                <p>Philippine Red Cross - Manila</p>
-                                <p>Whole Blood Donation</p>
-                            </div>
-                            <div class="request-actions">
-                                <button class="btn btn-outline btn-sm">Details</button>
-                            </div>
-                        </li>
-                        <li class="request-item">
-                            <div class="request-info">
-                                <h3>January 10, 2023</h3>
-                                <p>Philippine General Hospital</p>
-                                <p>Plasma Donation</p>
-                            </div>
-                            <div class="request-actions">
-                                <button class="btn btn-outline btn-sm">Details</button>
-                            </div>
-                        </li>
-                        <li class="request-item">
-                            <div class="request-info">
-                                <h3>November 5, 2022</h3>
-                                <p>St. Luke's Medical Center</p>
-                                <p>Whole Blood Donation</p>
-                            </div>
-                            <div class="request-actions">
-                                <button class="btn btn-outline btn-sm">Details</button>
-                            </div>
-                        </li>
-                        <li class="request-item">
-                            <div class="request-info">
-                                <h3>August 20, 2022</h3>
-                                <p>Makati Medical Center</p>
-                                <p>Platelet Donation</p>
-                            </div>
-                            <div class="request-actions">
-                                <button class="btn btn-outline btn-sm">Details</button>
-                            </div>
-                        </li>
-                    </ul>
-                    <button class="btn btn-outline" style="margin-top: 0.8rem; width: 100%;">
-                        View Full History
-                    </button>
+    <div class="card-header">
+        <h2>Donation History</h2>
+        <i class="fas fa-history" style="color: var(--primary); font-size: 1.3rem;"></i>
+    </div>
+    <ul class="request-list" style="max-height: 465px; overflow-y: auto;">
+        <li class="request-item">
+            <div class="request-info">
+                <h3>March 15, 2023</h3>
+                <p><i class="fas fa-map-marker-alt"></i> Philippine Red Cross - Manila</p>
+                <p><i class="fas fa-tint"></i> A+ Blood Type</p>
+                <p><i class="fas fa-heartbeat"></i> Surgery: Cardiac Bypass</p>
+                <p><i class="fas fa-check-circle"></i> Successful Donation</p>
+            </div>
+            <div class="request-actions">
+                <button class="btn btn-outline btn-sm view-details">Details</button>
+            </div>
+        </li>
+        <li class="request-item">
+            <div class="request-info">
+                <h3>January 10, 2023</h3>
+                <p><i class="fas fa-map-marker-alt"></i> Philippine General Hospital</p>
+                <p><i class="fas fa-tint"></i> B- Blood Type</p>
+                <p><i class="fas fa-brain"></i> Surgery: Neurosurgery</p>
+                <p><i class="fas fa-check-circle"></i> Successful Donation</p>
+            </div>
+            <div class="request-actions">
+                <button class="btn btn-outline btn-sm view-details">Details</button>
+            </div>
+        </li>
+        <li class="request-item">
+            <div class="request-info">
+                <h3>November 5, 2022</h3>
+                <p><i class="fas fa-map-marker-alt"></i> St. Luke's Medical Center</p>
+                <p><i class="fas fa-tint"></i> O+ Blood Type</p>
+                <p><i class="fas fa-bone"></i> Surgery: Orthopedic Procedure</p>
+                <p><i class="fas fa-check-circle"></i> Successful Donation</p>
+            </div>
+            <div class="request-actions">
+                <button class="btn btn-outline btn-sm view-details">Details</button>
+            </div>
+        </li>
+        <li class="request-item">
+            <div class="request-info">
+                <h3>August 20, 2022</h3>
+                <p><i class="fas fa-map-marker-alt"></i> Makati Medical Center</p>
+                <p><i class="fas fa-tint"></i> AB+ Blood Type</p>
+                <p><i class="fas fa-baby"></i> Surgery: Emergency C-Section</p>
+                <p><i class="fas fa-check-circle"></i> Successful Donation</p>
+            </div>
+            <div class="request-actions">
+                <button class="btn btn-outline btn-sm view-details">Details</button>
+            </div>
+        </li>
+    </ul>
+    <button class="btn btn-outline" style="margin-top: 0.8rem; width: 100%;" id="viewFullHistory">
+        View Full History
+    </button>
+</section>
                 </section>
             </div>
         </section>
     </div>
 
+    <!-- Modals -->
+    <!-- Request Details Modal -->
     <div class="modal" id="requestModal">
         <div class="modal-content">
             <span class="close-modal">&times;</span>
@@ -400,6 +432,7 @@
                 <p><strong>Address:</strong> Taft Avenue, Ermita, Manila</p>
                 <p><strong>Contact Person:</strong> Wilma Santos</p>
                 <p><strong>Contact Phone:</strong> +63 917 123 4567</p>
+                <p><strong>Surgery Type:</strong> <i class="fas fa-procedures"></i> Cardiac Bypass</p>
                 <p><strong>Reason for Request:</strong> Emergency surgery following accident</p>
                 <p><strong>Urgency:</strong> High - Needed within 24 hours</p>
             </div>
@@ -409,7 +442,134 @@
             </div>
         </div>
     </div>
+    
+    <!-- Donation Details Modal -->
+    <div class="modal" id="donationDetailsModal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Donation Details</h2>
+            <div class="donation-details">
+                <p><strong>Date:</strong> <span id="detailDate"></span></p>
+                <p><strong>Location:</strong> <span id="detailLocation"></span></p>
+                <p><strong>Blood Type:</strong> <span id="detailType"></span></p>
+                <p><strong>Surgery Type:</strong> <i class="fas fa-procedures"></i> <span id="detailSurgery"></span></p>
+                <p><strong>Notes:</strong> <span id="detailNotes"></span></p>
+            </div>
+            <button class="btn btn-primary" id="closeDetailsBtn">Close</button>
+        </div>
+    </div>   
 
+    <!-- Full History Modal -->
+    <div class="modal" id="fullHistoryModal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Complete Donation History</h2>
+            <div class="filter-container" style="margin-bottom: 1rem;">
+                <div class="filter-group">
+                    <span class="filter-label">Year:</span>
+                    <select id="filterHistoryYear" class="form-control">
+                        <option value="">All Years</option>
+                        <option value="2023">2023</option>
+                        <option value="2022">2022</option>
+                        <option value="2021">2021</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <span class="filter-label">Blood Type:</span>
+                    <select id="filterHistoryType" class="form-control">
+                        <option value="">All Types</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                    </select>
+                </div>
+            </div>
+            <ul class="request-list">
+                <li class="request-item">
+                    <div class="request-info">
+                        <h3>March 15, 2023</h3>
+                        <p><i class="fas fa-map-marker-alt"></i> Philippine Red Cross - Manila</p>
+                        <p><i class="fas fa-tint"></i> A+ Blood Type</p>
+                        <p><i class="fas fa-heartbeat"></i> Surgery: Cardiac Bypass</p>
+                        <p><i class="fas fa-check-circle"></i> Successful Donation</p>
+                    </div>
+                    <div class="request-actions">
+                        <button class="btn btn-outline btn-sm view-details">Details</button>
+                    </div>
+                </li>
+                <li class="request-item">
+                    <div class="request-info">
+                        <h3>January 10, 2023</h3>
+                        <p><i class="fas fa-map-marker-alt"></i> Philippine General Hospital</p>
+                        <p><i class="fas fa-tint"></i> B- Blood Type</p>
+                        <p><i class="fas fa-brain"></i> Surgery: Neurosurgery</p>
+                        <p><i class="fas fa-check-circle"></i> Successful Donation</p>
+                    </div>
+                    <div class="request-actions">
+                        <button class="btn btn-outline btn-sm view-details">Details</button>
+                    </div>
+                </li>
+                <li class="request-item">
+                    <div class="request-info">
+                        <h3>November 5, 2022</h3>
+                        <p><i class="fas fa-map-marker-alt"></i> St. Luke's Medical Center</p>
+                        <p><i class="fas fa-tint"></i> O+ Blood Type</p>
+                        <p><i class="fas fa-bone"></i> Surgery: Orthopedic Procedure</p>
+                        <p><i class="fas fa-check-circle"></i> Successful Donation</p>
+                    </div>
+                    <div class="request-actions">
+                        <button class="btn btn-outline btn-sm view-details">Details</button>
+                    </div>
+                </li>
+                <li class="request-item">
+                    <div class="request-info">
+                        <h3>August 20, 2022</h3>
+                        <p><i class="fas fa-map-marker-alt"></i> Makati Medical Center</p>
+                        <p><i class="fas fa-tint"></i> AB+ Blood Type</p>
+                        <p><i class="fas fa-baby"></i> Surgery: Emergency C-Section</p>
+                        <p><i class="fas fa-check-circle"></i> Successful Donation</p>
+                    </div>
+                    <div class="request-actions">
+                        <button class="btn btn-outline btn-sm view-details">Details</button>
+                    </div>
+                </li>
+                <li class="request-item">
+                    <div class="request-info">
+                        <h3>May 15, 2022</h3>
+                        <p><i class="fas fa-map-marker-alt"></i> Philippine Heart Center</p>
+                        <p><i class="fas fa-tint"></i> O+ Blood Type</p>
+                        <p><i class="fas fa-heart"></i> Surgery: Heart Transplant</p>
+                        <p><i class="fas fa-check-circle"></i> Successful Donation</p>
+                    </div>
+                    <div class="request-actions">
+                        <button class="btn btn-outline btn-sm view-details">Details</button>
+                    </div>
+                </li>
+                <li class="request-item">
+                    <div class="request-info">
+                        <h3>February 8, 2022</h3>
+                        <p><i class="fas fa-map-marker-alt"></i> National Kidney and Transplant Institute</p>
+                        <p><i class="fas fa-tint"></i> A- Blood Type</p>
+                        <p><i class="fas fa-kidneys"></i> Surgery: Kidney Transplant</p>
+                        <p><i class="fas fa-check-circle"></i> Successful Donation</p>
+                    </div>
+                    <div class="request-actions">
+                        <button class="btn btn-outline btn-sm view-details">Details</button>
+                    </div>
+                </li>
+            </ul>
+            <button class="btn btn-primary" style="margin-top: 1rem; width: 100%;" id="closeFullHistory">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
     <div class="modal" id="logoutModal">
         <div class="modal-content">
             <span class="close-modal">&times;</span>
