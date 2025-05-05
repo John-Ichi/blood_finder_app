@@ -1,0 +1,13 @@
+[
+    {
+        "email": "dummy-email@gmail.com",
+        "name": "John Ichiro Mananquil",
+        "blood_type": "A+",
+        "address": "Tanza, Cavite",
+        "last_donation": "No Record",
+        "contact": "09951091995",
+        "donor_notes": "Weekdays only.",
+        "available": "1",
+        "next_available": "2025-05-05"
+    }
+]
