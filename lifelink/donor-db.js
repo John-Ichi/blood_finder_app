@@ -1,25 +1,51 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // DOM element selectors
     const navLinks = document.querySelectorAll('.sidebar-links a, [data-page]');
     const pages = document.querySelectorAll('.page');
     const requestsLink = document.querySelector('[data-page="requests"]');
     
+    // Notification system
     let unreadRequests = 3;
     
+    // Initialize badge if needed
     if (unreadRequests > 0) {
         addNotificationBadge(requestsLink, unreadRequests);
     }
     
+    // Navigation functionality
     initializeNavigation();
+    
+    // Initialize notifications dropdown
     initializeNotifications();
+    
+    // Initialize request details modal
     initializeRequestDetails();
+    
+    // Initialize modals
     initializeModals();
+    
+    // Initialize request actions
     initializeRequestActions();
+    
+    // Initialize forms
     initializeForms();
+    
+    // Initialize filters
     initializeFilters();
+    
+    // Initialize pagination
     initializePagination();
+    
+    // Initialize donation details
     initializeDonationDetails();
+    
+    // Initialize donation history
     initializeDonationHistory();
+    
+    // Start request simulation
     startRequestSimulation();
+    
+    // HELPER FUNCTIONS
     
     function addNotificationBadge(element, count) {
         let badge = element.querySelector('.sidebar-notification-badge');
@@ -37,6 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function showPage(pageId) {
+        // Hide all pages and deactivate nav links
         pages.forEach(page => {
             page.classList.remove('active');
             if (page.id === `${pageId}-page`) {
@@ -51,6 +78,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
+        // Reset requests notifications when visiting requests page
         if (pageId === 'requests') {
             unreadRequests = 0;
             addNotificationBadge(requestsLink, unreadRequests);
@@ -68,6 +96,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
         
+        // Show home page by default
         showPage('home');
     }
     
@@ -91,6 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 });
             }
             
+            // Close dropdown when clicking outside
             window.addEventListener('click', function(e) {
                 if (!e.target.closest('.user-actions')) {
                     notificationDropdown.classList.remove('show');
@@ -127,7 +157,7 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
-    
+
     function closeAllModals() {
         document.querySelectorAll('.modal').forEach(modal => {
             modal.style.display = 'none';
@@ -135,23 +165,28 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function initializeModals() {
+        // Close modal buttons
         const closeModalButtons = document.querySelectorAll('.close-modal, .modal-actions button[id^="close"]');
         closeModalButtons.forEach(button => {
             button.addEventListener('click', function(e) {
                 e.preventDefault();
-                const modal = this.closest('.modal');
+                const modal = this.closest('.modal') || 
+                            document.querySelector('.modal.show') || 
+                            document.querySelector('.modal[style*="display: flex"]');
                 if (modal) {
                     modal.style.display = 'none';
                 }
             });
         });
         
+        // Close modal when clicking outside
         window.addEventListener('click', function(event) {
             if (event.target.classList.contains('modal')) {
                 event.target.style.display = 'none';
             }
         });
         
+        // Initialize logout modal
         const logoutBtn = document.getElementById('logoutBtn');
         const logoutModal = document.getElementById('logoutModal');
         
@@ -160,14 +195,13 @@ document.addEventListener('DOMContentLoaded', function() {
             const cancelLogout = document.getElementById('cancelLogout');
             
             logoutBtn.addEventListener('click', function() {
-                closeAllModals();
                 logoutModal.style.display = 'flex';
             });
             
             if (confirmLogout) {
                 confirmLogout.addEventListener('click', function() {
                     logoutModal.style.display = 'none';
-                    window.location.href = 'index.html';
+                    window.location.href = 'logout.php';
                 });
             }
             
@@ -222,7 +256,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     function initializeForms() {
-        const donationForm = document.getElementById('donationForm');
+        /* const donationForm = document.getElementById('donationForm');
         if (donationForm) {
             donationForm.addEventListener('submit', function(e) {
                 e.preventDefault();
@@ -256,12 +290,14 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                     `;
                     
+                    // Insert at the top of the list
                     if (historyList.firstChild) {
                         historyList.insertBefore(newDonation, historyList.firstChild);
                     } else {
                         historyList.appendChild(newDonation);
                     }
                     
+                    // Show a success message
                     showToast('Donation scheduled successfully!');
                 }
                 
@@ -270,20 +306,23 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
         
-        const profileForm = document.getElementById('profileForm');
+        /* const profileForm = document.getElementById('profileForm');
         if (profileForm) {
             profileForm.addEventListener('submit', function(e) {
                 e.preventDefault();
                 
                 const name = this.querySelector('#fullName').value;
+                const bloodType = this.querySelector('#bloodTypeProfile').value;
                 
                 const profileName = document.querySelector('.user-profile h3');
+                const profileBloodType = document.querySelector('.user-profile p');
                 
                 if (profileName) profileName.textContent = name;
+                if (profileBloodType) profileBloodType.textContent = bloodType + ' Blood Type';
                 
                 showToast('Profile updated successfully!');
             });
-        }
+        } */
     }
     
     function initializeFilters() {
@@ -328,6 +367,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
+        // Initialize history filters
         const filterHistoryYear = document.getElementById('filterHistoryYear');
         const filterHistoryType = document.getElementById('filterHistoryType');
         
@@ -365,11 +405,42 @@ document.addEventListener('DOMContentLoaded', function() {
         if (filterHistoryYear) filterHistoryYear.addEventListener('change', filterHistory);
         if (filterHistoryType) filterHistoryType.addEventListener('change', filterHistory);
     }
-
+    
     function initializePagination() {
-        // Placeholder for pagination initialization
+        const prevPageBtn = document.getElementById('prevPage');
+        const nextPageBtn = document.getElementById('nextPage');
+        const pageIndicator = document.getElementById('pageIndicator');
+        
+        if (prevPageBtn && nextPageBtn && pageIndicator) {
+            let currentPage = 1;
+            const totalPages = 3;
+            
+            function updatePagination() {
+                pageIndicator.textContent = `Page ${currentPage} of ${totalPages}`;
+                prevPageBtn.disabled = currentPage === 1;
+                prevPageBtn.classList.toggle('btn-disabled', currentPage === 1);
+                nextPageBtn.disabled = currentPage === totalPages;
+                nextPageBtn.classList.toggle('btn-disabled', currentPage === totalPages);
+            }
+            
+            prevPageBtn.addEventListener('click', function() {
+                if (currentPage > 1) {
+                    currentPage--;
+                    updatePagination();
+                }
+            });
+            
+            nextPageBtn.addEventListener('click', function() {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    updatePagination();
+                }
+            });
+            
+            updatePagination();
+        }
     }
-
+    
     function initializeDonationDetails() {
         document.querySelectorAll('#profile-page .request-item .view-details').forEach(btn => {
             btn.classList.add('donation-details-btn');  
@@ -396,20 +467,27 @@ document.addEventListener('DOMContentLoaded', function() {
                 const donationDate = donationItem.querySelector('h3').textContent;
                 const donationLocation = donationItem.querySelector('p').textContent;
                 
-                const bloodTypeElement = donationItem.querySelectorAll('p')[1];
-                const bloodType = bloodTypeElement ? bloodTypeElement.textContent : 'Not specified';
-                
-                const surgeryElement = donationItem.querySelectorAll('p')[2];
-                const surgeryType = surgeryElement ? surgeryElement.textContent : 'Regular donation';
+                const paragraphs = donationItem.querySelectorAll('p');
+                let donationType = "Whole Blood Donation";
+                let surgeryType = "Standard Procedure";
+
+                for (let p of paragraphs) {
+                    const text = p.textContent;
+                    if (text.includes('Blood Type')) {
+                        donationType = text;
+                    }
+                    if (text.includes('Surgery:')) {
+                        surgeryType = text.replace('Surgery:', '').trim();
+                    }
+                }
         
                 if (donationDetailsModal) {
                     document.getElementById('detailDate').textContent = donationDate;
                     document.getElementById('detailLocation').textContent = donationLocation;
-                    document.getElementById('detailType').textContent = bloodType;
+                    document.getElementById('detailType').textContent = donationType;
                     document.getElementById('detailSurgery').textContent = surgeryType;
                     document.getElementById('detailNotes').textContent = "No adverse reactions reported. Donation completed successfully.";
         
-                    closeAllModals();
                     donationDetailsModal.style.display = 'flex';
                 }
             }
@@ -431,7 +509,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
         if (viewFullHistoryBtn && fullHistoryModal) {
             viewFullHistoryBtn.addEventListener('click', function() {
-                closeAllModals();
                 fullHistoryModal.style.display = 'flex';
                 
                 const historyItems = document.querySelectorAll('#profile-page .card .request-list .request-item'); 
@@ -477,15 +554,16 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 showToast('New blood request received!');
             }
-        }, 60000);
+        }, 60000); // Every minute
     }
     
-    function showToast(message, type = 'success') {
+    /* function showToast(message, type = 'success') {
         const toast = document.createElement('div');
         toast.className = `toast ${type}`;
         toast.textContent = message;
         document.body.appendChild(toast);
         
+        // Set toast style based on type
         if (type === 'success') {
             toast.style.backgroundColor = 'var(--accent)';
         } else if (type === 'error') {
@@ -494,6 +572,7 @@ document.addEventListener('DOMContentLoaded', function() {
             toast.style.backgroundColor = 'var(--dark)';
         }
         
+        // Animation sequence
         setTimeout(() => {
             toast.classList.add('show');
             setTimeout(() => {
@@ -503,5 +582,5 @@ document.addEventListener('DOMContentLoaded', function() {
                 }, 300);
             }, 3000);
         }, 100);
-    }
+    } */
 });

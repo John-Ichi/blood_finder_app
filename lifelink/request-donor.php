@@ -1,13 +1,3 @@
-<!--
-Request for blood to donor
-1. Get information
-- includes:
-a. name
-b. contact
-c. request description (e.g. reason for blood request)
-d. flag as emergency [URGENT]
-e. hospital
--->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,7 +9,7 @@ e. hospital
 <body>
     <h1>
         <?php
-        include 'functions.php';
+        include '_functions.php';
 
         $conn = connect();
 

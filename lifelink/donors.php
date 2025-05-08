@@ -1,5 +1,5 @@
 <?php
-include 'functions.php';
+include '_functions.php';
 
 updateAvailablity();
 getDonorInfoJSON();

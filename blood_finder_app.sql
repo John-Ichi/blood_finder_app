@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 05, 2025 at 12:15 PM
+-- Generation Time: May 09, 2025 at 01:56 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -91,7 +91,9 @@ CREATE TABLE `blood_requests` (
 
 INSERT INTO `blood_requests` (`request_id`, `requested_donor`, `name`, `contact`, `request_description`, `urgent`, `healthcare_institution`) VALUES
 (2, 2, 'John', '09662996199', 'TEST', 1, 'dummy hospital'),
-(3, 2, 'Allen', '12345678909', 'TEST 2', 0, 'dummy hospital');
+(3, 2, 'Allen', '12345678909', 'TEST 2', 0, 'dummy hospital'),
+(4, 2, '3', 'asd', 'asd', 1, 'dummy hospital'),
+(5, 2, 'test123', 'asd', '', 1, 'dummy hospital');
 
 -- --------------------------------------------------------
 
@@ -111,6 +113,29 @@ CREATE TABLE `donatee_request` (
 
 INSERT INTO `donatee_request` (`request_id`, `type_requested`, `date`) VALUES
 (1, 'A+', '2025-04-13');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `donation_appointments`
+--
+
+CREATE TABLE `donation_appointments` (
+  `donation_id` int(11) NOT NULL,
+  `donor_id` int(11) NOT NULL,
+  `date_of_donation` date NOT NULL,
+  `preferred_time` enum('morning','afternoon','evening') NOT NULL,
+  `hospital_id` int(11) NOT NULL,
+  `additional_info` varchar(500) NOT NULL DEFAULT 'No additional information regarding donor.'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `donation_appointments`
+--
+
+INSERT INTO `donation_appointments` (`donation_id`, `donor_id`, `date_of_donation`, `preferred_time`, `hospital_id`, `additional_info`) VALUES
+(8, 2, '2025-05-10', 'morning', 2, 'TEST'),
+(9, 4, '2025-05-10', 'afternoon', 2, 'TEST 3');
 
 -- --------------------------------------------------------
 
@@ -165,7 +190,9 @@ CREATE TABLE `donor_info` (
 --
 
 INSERT INTO `donor_info` (`email`, `name`, `blood_type`, `address`, `last_donation`, `contact`, `donor_notes`, `available`, `next_available`) VALUES
-('dummy-email@gmail.com', 'John Ichiro Mananquil', 'A+', 'Tanza, Cavite', 'No Record', '09951091995', 'Weekdays only.', 1, '2025-05-05');
+('dummy-email@gmail.com', 'John Ichiro Mananquil', 'A+', 'Tanza, Cavite', 'No Record', '09951091995', 'Test update No. 1234', 1, '2025-05-09'),
+('dummy-email2@gmail.com', 'Test', 'A+', 'Naic, Cavite', 'No Record', '09991112222', '', 1, '2025-05-09'),
+('dummy-email3@gmail.com', 'Alex Boy', 'A+', 'Naic, Cavite', 'No Record', '1', 'Hihi', 1, '2025-05-09');
 
 -- --------------------------------------------------------
 
@@ -187,7 +214,9 @@ CREATE TABLE `donor_login_info` (
 --
 
 INSERT INTO `donor_login_info` (`id`, `email`, `password`, `last_login`, `is_active`, `date_created`) VALUES
-(2, 'dummy-email@gmail.com', '$2y$10$EK0gSQ5golcpx0IMSzcu4u2BEdPSkCYeBv2bLNzecTbGjz1VuBn3C', '2025-05-05', 1, '2025-05-02');
+(2, 'dummy-email@gmail.com', '$2y$10$EK0gSQ5golcpx0IMSzcu4u2BEdPSkCYeBv2bLNzecTbGjz1VuBn3C', '2025-05-09', 1, '2025-05-02'),
+(3, 'dummy-email2@gmail.com', '$2y$10$tEsmnGx81i4HN9Ie/EOHF.ovuedGpLR0RXI66WcsoSVI0KBPBgTJ2', '2025-05-07', 1, '2025-05-07'),
+(4, 'dummy-email3@gmail.com', '$2y$10$wofa6uLtnv2pHqYQAqWOHulwp.6MCMeZE1.LF6Tf21Gpm8ohYcGKS', '2025-05-08', 1, '2025-05-08');
 
 -- --------------------------------------------------------
 
@@ -201,6 +230,55 @@ CREATE TABLE `donor_record` (
   `number_of_donations` int(11) NOT NULL,
   `previous_donation` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `hospital_info`
+--
+
+CREATE TABLE `hospital_info` (
+  `id` int(11) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `address` varchar(100) NOT NULL,
+  `a_positive_stock` int(11) NOT NULL,
+  `a_negative_stock` int(11) NOT NULL,
+  `b_positive_stock` int(11) NOT NULL,
+  `b_negative_stock` int(11) NOT NULL,
+  `ab_positive_stock` int(11) NOT NULL,
+  `ab_negative_stock` int(11) NOT NULL,
+  `o_positive_stock` int(11) NOT NULL,
+  `o_negative_stock` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `hospital_info`
+--
+
+INSERT INTO `hospital_info` (`id`, `name`, `address`, `a_positive_stock`, `a_negative_stock`, `b_positive_stock`, `b_negative_stock`, `ab_positive_stock`, `ab_negative_stock`, `o_positive_stock`, `o_negative_stock`) VALUES
+(2, 'dummy', 'Tanza, Cavite', 12, 11, 14, 16, 17, 15, 9, 10);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `hospital_login_info`
+--
+
+CREATE TABLE `hospital_login_info` (
+  `id` int(11) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `last_login` date DEFAULT NULL,
+  `is_active` tinyint(1) DEFAULT 1,
+  `date_created` date DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `hospital_login_info`
+--
+
+INSERT INTO `hospital_login_info` (`id`, `email`, `password`, `last_login`, `is_active`, `date_created`) VALUES
+(2, 'hospital-dummy@gmail.com', '$2y$10$Srzjb3jqVIdCHt/DJ.DDi.Zq0IDWykiInEOtQ9HGo93e2Wx.eoFMC', NULL, 1, '2025-05-07');
 
 --
 -- Indexes for dumped tables
@@ -232,6 +310,14 @@ ALTER TABLE `donatee_request`
   ADD PRIMARY KEY (`request_id`);
 
 --
+-- Indexes for table `donation_appointments`
+--
+ALTER TABLE `donation_appointments`
+  ADD PRIMARY KEY (`donation_id`),
+  ADD KEY `donor_id` (`donor_id`),
+  ADD KEY `hospital_id` (`hospital_id`);
+
+--
 -- Indexes for table `donor`
 --
 ALTER TABLE `donor`
@@ -258,6 +344,19 @@ ALTER TABLE `donor_record`
   ADD KEY `donor_id` (`donor_id`);
 
 --
+-- Indexes for table `hospital_info`
+--
+ALTER TABLE `hospital_info`
+  ADD KEY `id` (`id`);
+
+--
+-- Indexes for table `hospital_login_info`
+--
+ALTER TABLE `hospital_login_info`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `email` (`email`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -271,13 +370,19 @@ ALTER TABLE `blood_bank_listing`
 -- AUTO_INCREMENT for table `blood_requests`
 --
 ALTER TABLE `blood_requests`
-  MODIFY `request_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `request_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `donatee_request`
 --
 ALTER TABLE `donatee_request`
   MODIFY `request_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `donation_appointments`
+--
+ALTER TABLE `donation_appointments`
+  MODIFY `donation_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `donor`
@@ -289,13 +394,19 @@ ALTER TABLE `donor`
 -- AUTO_INCREMENT for table `donor_login_info`
 --
 ALTER TABLE `donor_login_info`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `donor_record`
 --
 ALTER TABLE `donor_record`
   MODIFY `record_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT for table `hospital_login_info`
+--
+ALTER TABLE `hospital_login_info`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 
 --
 -- Constraints for dumped tables
@@ -314,6 +425,13 @@ ALTER TABLE `blood_requests`
   ADD CONSTRAINT `blood_requests_ibfk_1` FOREIGN KEY (`requested_donor`) REFERENCES `donor_login_info` (`id`);
 
 --
+-- Constraints for table `donation_appointments`
+--
+ALTER TABLE `donation_appointments`
+  ADD CONSTRAINT `donation_appointments_ibfk_1` FOREIGN KEY (`donor_id`) REFERENCES `donor_login_info` (`id`),
+  ADD CONSTRAINT `donation_appointments_ibfk_2` FOREIGN KEY (`hospital_id`) REFERENCES `hospital_login_info` (`id`);
+
+--
 -- Constraints for table `donor_info`
 --
 ALTER TABLE `donor_info`
@@ -324,6 +442,12 @@ ALTER TABLE `donor_info`
 --
 ALTER TABLE `donor_record`
   ADD CONSTRAINT `donor_record_ibfk_1` FOREIGN KEY (`donor_id`) REFERENCES `donor` (`donor_id`);
+
+--
+-- Constraints for table `hospital_info`
+--
+ALTER TABLE `hospital_info`
+  ADD CONSTRAINT `hospital_info_ibfk_1` FOREIGN KEY (`id`) REFERENCES `hospital_login_info` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
