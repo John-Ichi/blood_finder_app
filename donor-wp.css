@@ -419,6 +419,15 @@ body {
   margin-bottom: 0.5rem;
 }
 
+.no-results-message {
+    text-align: center;
+    padding: 1.5rem;
+    color: var(--text-light);
+    background-color: var(--primary-light);
+    border-radius: var(--radius);
+    margin: 1rem 0;
+  }
+
 .request-item {
   padding: 0.8rem 0;
   border-bottom: 1px solid #eee;
@@ -739,7 +748,7 @@ body {
 }
 
 #donationDetailsModal {
-  z-index: 1001;
+  z-index: 1002;
 }
 
 .donation-details p {
