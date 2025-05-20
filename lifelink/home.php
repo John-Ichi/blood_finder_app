@@ -72,36 +72,30 @@ if(isset($_POST['signup'])) {
 </head>
 <body>
 
-    <header>
-
-        <div class="container">
-            <nav>
-                <div class="logo">
-                    <i class="fas fa-heartbeat"></i>
-                    <span>LifeLink</span>
-                </div>
-                <div class="nav-links">
-                    <a href="#" class="home-link">Home</a>
-                    <a href="donors.php" class="donorlist-link">Donors</a>
-                    <a href="#" class="login-link">Blood Banks</a>
-                </div>
-                <div class="ham-menu">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </div>
-            </nav>
-            <div class="off-screen-menu">
-                <ul>
-                    <li>Home</li>
-                    <li>Login</li>
-                    <li>About Us</li>
-                    <li>Contact</li>
-                </ul>
-            </div>
-        </div>   
-
-    </header>
+<header class="header">
+    <a href="#" class="logo">
+        <i class="fas fa-heartbeat"></i>
+        <span>LifeLink</span>
+    </a>
+    <div class="nav-links">
+        <a href="#">Home</a>
+        <a href="#">Donor Lists</a>
+        <a href="#">Blood Bank Lists</a>
+    </div>
+    <div class="ham-menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </div>
+    <div class="off-screen-menu">
+        <ul>
+            <li>Home</li>
+            <li>Login</li>
+            <li>About Us</li>
+            <li>Contact</li>
+        </ul>
+    </div>
+</header>
 
     <section class="page active" id="home">
 
