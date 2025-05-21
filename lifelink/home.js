@@ -20,24 +20,21 @@ document.addEventListener('DOMContentLoaded', function() {
         xhttp.send();
     }
 
-    // Burger list
     const hamMenu = document.querySelector('.ham-menu');
     const offScreenMenu = document.querySelector('.off-screen-menu');
     const body = document.body;
+    
 
-        // Close burger
     if (hamMenu && offScreenMenu) {
         hamMenu.addEventListener('click', function() {
             hamMenu.classList.toggle('active');
             offScreenMenu.classList.toggle('active');
-            body.classList.toggle('menu-open');
         });
 
         document.addEventListener('click', function(e) {
             if (!hamMenu.contains(e.target) && !offScreenMenu.contains(e.target) && offScreenMenu.classList.contains('active')) {
                 hamMenu.classList.remove('active');
                 offScreenMenu.classList.remove('active');
-                body.classList.remove('menu-open');
             }
         });
  
@@ -45,7 +42,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (e.key === 'Escape' && offScreenMenu.classList.contains('active')) {
                 hamMenu.classList.remove('active');
                 offScreenMenu.classList.remove('active');
-                body.classList.remove('menu-open');
             }
         });
     } else {
@@ -61,11 +57,11 @@ document.addEventListener('DOMContentLoaded', function() {
             body.classList.remove('menu-open');
             const menuText = this.textContent.trim().toLowerCase();
             
-            // Show home if home
             if (menuText === 'home') {
                 showPage('home');
-            } else if (menuText === 'login') {
-                checkLogin(); // Show login if login
+            } else if (menuText === 'donor login') {
+                showLoginForm();
+                showPopup();
             }
         });
     });
@@ -91,63 +87,91 @@ document.addEventListener('DOMContentLoaded', function() {
     const blurOverlay = document.querySelector('.blur-bg-overlay');
     const closeBtn = document.querySelector('.close-btn');
     
-    // Show popups: login and signup
-    function showPopup() {
-        if (formPopup && blurOverlay) {
-            formPopup.style.display = 'block';
-            blurOverlay.style.display = 'block';
-             
-            formPopup.offsetHeight;  
-            blurOverlay.offsetHeight;  
-            
-            setTimeout(() => {
-                formPopup.classList.add('popup-active');
-                blurOverlay.classList.add('overlay-active');
-            }, 10);
-        }
+   function showPopup() {
+    if (formPopup && blurOverlay) {
+        formPopup.style.display = 'block';
+        blurOverlay.style.display = 'block';
+
+        document.body.classList.add('no-scroll'); 
+
+        formPopup.offsetHeight;
+        blurOverlay.offsetHeight;
+
+        setTimeout(() => {
+            formPopup.classList.add('popup-active');
+            blurOverlay.classList.add('overlay-active');
+        }, 10);
     }
+}
 
     function hidePopup() {
+    if (formPopup && blurOverlay) {
         formPopup.classList.remove('popup-active');
         blurOverlay.classList.remove('overlay-active');
+
+        document.body.classList.remove('no-scroll');
 
         setTimeout(() => {
             formPopup.style.display = 'none';
             blurOverlay.style.display = 'none';
         }, 300);
     }
-
-    donorLoginBtn.addEventListener('click', function() {
-        checkLogin()
-    });
-
-    closeBtn.addEventListener('click', hidePopup);
+}
 
     const signupLink = document.querySelector('.form-box.login .bottom-link a');
     const loginLink = document.querySelector('.form-box.signup .bottom-link a');
     const loginForm = document.querySelector('.form-box.login');
     const signupForm = document.querySelector('.form-box.signup');
     
-    // Show signup
     function showSignupForm() {
-        loginForm.style.display = 'none';
-        signupForm.style.display = 'flex';
+        if (loginForm && signupForm) {
+            loginForm.classList.add('hiding');
+            loginForm.classList.remove('showing');
+            
+            setTimeout(() => {
+                loginForm.style.display = 'none';
+                signupForm.style.display = 'flex';
+
+                signupForm.offsetHeight;
+
+                setTimeout(() => {
+                    signupForm.classList.remove('hiding');
+                    signupForm.classList.add('showing');
+                }, 10);
+            }, 300);
+        }
     }
 
     function showLoginForm() {
-        signupForm.style.display = 'none';
-        loginForm.style.display = 'flex';
+        if (loginForm && signupForm) {
+            if (signupForm.style.display === 'flex') {
+                signupForm.classList.add('hiding');
+                signupForm.classList.remove('showing');
+                
+                setTimeout(() => {
+                    signupForm.style.display = 'none';
+                    loginForm.style.display = 'flex';
+                    
+    
+                    loginForm.offsetHeight;
+                    
+                    setTimeout(() => {
+                        loginForm.classList.remove('hiding');
+                        loginForm.classList.add('showing');
+                    }, 10);
+                }, 300);
+            } else {
+                loginForm.style.display = 'flex';
+                
+                loginForm.offsetHeight;
+                
+                setTimeout(() => {
+                    loginForm.classList.remove('hiding');
+                    loginForm.classList.add('showing');
+                }, 10);
+            }
+        }
     }
-
-    signupLink.addEventListener('click', function(e) {
-        e.preventDefault();
-        showSignupForm();
-    });
-
-    loginLink.addEventListener('click', function(e) {
-        e.preventDefault();
-        showLoginForm();
-    });
     
     /* const navLinks = document.querySelectorAll('.nav-links a');
     navLinks.forEach(link => {
@@ -158,6 +182,52 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }); */
 
+    if (blurOverlay) blurOverlay.style.display = 'none';
+    if (formPopup) formPopup.style.display = 'none';
+    if (loginForm) {
+        loginForm.style.display = 'flex';
+        loginForm.classList.add('showing');
+    }
+    if (signupForm) {
+        signupForm.style.display = 'none';
+        signupForm.classList.add('hiding');
+    }
+
+    if (donorLoginBtn) {
+        donorLoginBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            showLoginForm();
+            showPopup();
+        });
+    }
+
+    if (closeBtn) {
+        closeBtn.addEventListener('click', hidePopup);
+    }
+
+    if (signupLink) {
+        signupLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            showSignupForm();
+        });
+    }
+
+    if (loginLink) {
+        loginLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            showLoginForm();
+        });
+    }
+    
+    const navLinks = document.querySelectorAll('.nav-links a');
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const target = this.getAttribute('href').replace('#', '');
+            showPage(target);
+        });
+    });
+
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             hidePopup();
@@ -166,15 +236,15 @@ document.addEventListener('DOMContentLoaded', function() {
     
     const searchBtn = document.getElementById('searchBtn');
     if (searchBtn) {
-        searchBtn.addEventListener('click', function(e) {
+        searchBtn.addEventListener('click', function() {
             const bloodType = document.getElementById('bloodType');
             const bloodTypeValue = bloodType ? bloodType.value : '';
             
             if (!bloodTypeValue) {
                 alert('Please select a blood type');
-                e.preventDefault();
                 return;
             }
+            alert('Search for blood type: ' + bloodTypeValue);
         });
     }
 
@@ -224,12 +294,10 @@ document.addEventListener('DOMContentLoaded', function() {
     setupInputFields(loginFormElement);
     setupInputFields(signupFormElement);
 
-    // Signup form
     if (signupFormElement) {
         const emailInput = signupFormElement.querySelector('input[type="email"]');
-        // const phoneInput = signupFormElement.querySelector('input[type="tel"]');
-        const passwordInput = signupFormElement.querySelector('input[name="password"]');
-        const confirmPassword = signupFormElement.querySelector('input[name="confirm_password"]');
+        const phoneInput = signupFormElement.querySelector('input[type="tel"]');
+        const passwordInput = signupFormElement.querySelector('input[type="password"]');
         const policyCheckbox = document.getElementById('policy');
         const submitButton = signupFormElement.querySelector('button[type="submit"]');
         
@@ -272,7 +340,7 @@ document.addEventListener('DOMContentLoaded', function() {
             validateForm();
         });
 
-        /* phoneInput.addEventListener('input', function() {
+        phoneInput.addEventListener('input', function() {
             const phoneRegex = /^\d{10}$/;
             const digitsOnly = this.value.replace(/\D/g, '');
             
@@ -286,38 +354,14 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             validateForm();
-        }); */
-
-        let password;
-        let password_confirm;
+        });
     
         passwordInput.addEventListener('input', function() {
-            password = this.value.trim();
             if (this.value.trim() === '') {
                 removeErrorMessage(this);
                 this.style.borderColor = '#ddd';
             } else if (this.value.length < 8) {
                 showErrorMessage(this, 'Password must be at least 8 characters long');
-            } else {
-                removeErrorMessage(this);
-            }
-
-            if (password_confirm != password) {
-                showErrorMessage(confirmPassword, "Passwords don't match");
-            } else {
-                removeErrorMessage(confirmPassword);
-            }
-            
-            validateForm();
-        });
-
-        confirmPassword.addEventListener('input', function() {
-            password_confirm = this.value.trim();
-            if (this.value.trim() === '') {
-                removeErrorMessage(this);
-                this.style.borderColor = '#ddd';
-            } else if (password_confirm != password) {
-                showErrorMessage(this, "Passwords don't match");
             } else {
                 removeErrorMessage(this);
             }
@@ -327,19 +371,18 @@ document.addEventListener('DOMContentLoaded', function() {
 
         function validateForm() {
             const emailValid = !emailInput.parentNode.querySelector('.error-message') && emailInput.value.trim() !== '';
-            // const phoneValid = !phoneInput.parentNode.querySelector('.error-message') && phoneInput.value.trim() !== '';
+            const phoneValid = !phoneInput.parentNode.querySelector('.error-message') && phoneInput.value.trim() !== '';
             const passwordValid = !passwordInput.parentNode.querySelector('.error-message') && passwordInput.value.trim() !== '';
-            const passwordMatch = !confirmPassword.parentNode.querySelector('.error-message') && confirmPassword.value.trim() != '';
             const policyChecked = policyCheckbox.checked;
 
-            submitButton.disabled = !(emailValid /* phoneValid */ && passwordValid && passwordMatch && policyChecked);
+            submitButton.disabled = !(emailValid && phoneValid && passwordValid && policyChecked);
             submitButton.style.opacity = submitButton.disabled ? '0.5' : '1';
             submitButton.style.cursor = submitButton.disabled ? 'not-allowed' : 'pointer';
         }
 
         policyCheckbox.addEventListener('change', validateForm);
 
-        /* signupFormElement.addEventListener('submit', function(e) {
+        signupFormElement.addEventListener('submit', function(e) {
             e.preventDefault();
         
             const emailValid = !emailInput.parentNode.querySelector('.error-message') && emailInput.value.trim() !== '';
@@ -352,10 +395,10 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 alert('Please fill all fields correctly');
             }
-        }); */
+        });
     }
 
-    /* if (loginFormElement) {
+    if (loginFormElement) {
         const emailInput = loginFormElement.querySelector('input[type="email"]');
         const passwordInput = loginFormElement.querySelector('input[type="password"]');
         const submitButton = loginFormElement.querySelector('button[type="submit"]');
@@ -369,41 +412,41 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert('Please enter your email and password');
             }
         });
-    } */
-
-    // Forgot password form
-    const forgotForm = document.querySelector('.form-box.forgot');
-    const forgotPasswordLink = document.getElementById('forgot-password-link');
-    const backToLoginLink = document.getElementById('back-to-login');
-
-    function showForgotForm() {
-        loginForm.style.display = 'none';
-        signupForm.style.display = 'none';
-        forgotForm.style.display = 'flex';
-
-        forgotForm.offsetHeight;
-        forgotForm.classList.remove('hiding');
-        forgotForm.classList.add('showing');
     }
-
-    function hideForgotForm() {
-        forgotForm.style.display = 'none';
-        loginForm.style.display = 'flex';
-
-        loginForm.offsetHeight;
-        loginForm.classList.remove('hiding');
-        loginForm.classList.add('showing');
-    }
-
-    if (forgotForm) forgotForm.style.display = 'none';
-
-    forgotPasswordLink.addEventListener('click', function(e) {
-        e.preventDefault();
-        showForgotForm();
-    });
-
-    backToLoginLink.addEventListener('click', function(e) {
-        e.preventDefault();
-        hideForgotForm();
-    });
 });
+
+const forgotForm = document.querySelector('.form-box.forgot');
+const forgotPasswordLink = document.getElementById('forgot-password-link');
+const backToLoginLink = document.getElementById('back-to-login');
+
+function showForgotForm() {
+    loginForm.style.display = 'none';
+    signupForm.style.display = 'none';
+    forgotForm.style.display = 'flex';
+
+    forgotForm.offsetHeight;
+    forgotForm.classList.remove('hiding');
+    forgotForm.classList.add('showing');
+}
+
+function hideForgotForm() {
+    forgotForm.style.display = 'none';
+    loginForm.style.display = 'flex';
+
+    loginForm.offsetHeight;
+    loginForm.classList.remove('hiding');
+    loginForm.classList.add('showing');
+}
+
+if (forgotForm) forgotForm.style.display = 'none';
+
+forgotPasswordLink.addEventListener('click', function(e) {
+    e.preventDefault();
+    showForgotForm();
+});
+
+backToLoginLink.addEventListener('click', function(e) {
+    e.preventDefault();
+    hideForgotForm();
+});
+
