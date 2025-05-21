@@ -84,7 +84,6 @@ function getUrgentRequests($sess_id) {
     if($get_urgent_rqs->num_rows === 0) {
         echo "<p>No Urgent Requests Yet.</p>";
     }
-    $count = 0;
     while($row = $get_urgent_rqs->fetch_assoc()) {
         // tbc data-type && data-distance
         echo "

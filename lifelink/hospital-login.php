@@ -1,7 +1,5 @@
 <?php
 include '_functions.php';
-
-session_start();
 $conn = connect();
 
 if(isset($_SESSION['hospital_email'])) { // if naka login ang hospital

@@ -1,8 +1,10 @@
+// Restart page
 if (window.history.replaceState) {
     window.history.replaceState(null, null, window.location.href);
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    // AJAX: Check if naka login si user
     function checkLogin() {
         const xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function() {
@@ -25,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const offScreenMenu = document.querySelector('.off-screen-menu');
     const body = document.body;
 
-        // Close burger
+     // Close burger
     if (hamMenu && offScreenMenu) {
         hamMenu.addEventListener('click', function() {
             hamMenu.classList.toggle('active');
@@ -64,7 +66,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Show home if home
             if (menuText === 'home') {
                 showPage('home');
-            } else if (menuText === 'login') {
+            } else if (menuText === 'login') { // Check login para deretso sa dashboard if may session
                 checkLogin(); // Show login if login
             }
         });
@@ -91,7 +93,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const blurOverlay = document.querySelector('.blur-bg-overlay');
     const closeBtn = document.querySelector('.close-btn');
     
-    // Show popups: login and signup
+    // Show popups: login and signup [ refactored ]
     function showPopup() {
         if (formPopup && blurOverlay) {
             formPopup.style.display = 'block';
@@ -128,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const loginForm = document.querySelector('.form-box.login');
     const signupForm = document.querySelector('.form-box.signup');
     
-    // Show signup
+    // Show signup [ refactored ]
     function showSignupForm() {
         loginForm.style.display = 'none';
         signupForm.style.display = 'flex';
@@ -158,29 +160,29 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }); */
 
+    // Close popup on escape
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') {
             hidePopup();
         }
     });
     
+    // Search
     const searchBtn = document.getElementById('searchBtn');
-    if (searchBtn) {
-        searchBtn.addEventListener('click', function(e) {
-            const bloodType = document.getElementById('bloodType');
-            const bloodTypeValue = bloodType ? bloodType.value : '';
+    searchBtn.addEventListener('click', function(e) {
+        const bloodType = document.getElementById('bloodType');
+        const bloodTypeValue = bloodType ? bloodType.value : '';
             
-            if (!bloodTypeValue) {
-                alert('Please select a blood type');
-                e.preventDefault();
-                return;
-            }
-        });
-    }
+        if (!bloodTypeValue) {
+            alert('Please select a blood type');
+            e.preventDefault();
+            return;
+        }
+    });
 
+    // IDK
     const signupFormElement = document.querySelector('.form-box.signup form');
     const loginFormElement = document.querySelector('.form-box.login form');
-    
 
     function setupInputFields(form) {
         if (!form) return;
@@ -224,7 +226,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setupInputFields(loginFormElement);
     setupInputFields(signupFormElement);
 
-    // Signup form
+    // Signup form [ refactored ]
     if (signupFormElement) {
         const emailInput = signupFormElement.querySelector('input[type="email"]');
         // const phoneInput = signupFormElement.querySelector('input[type="tel"]');
