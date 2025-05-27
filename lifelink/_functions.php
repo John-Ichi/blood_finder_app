@@ -27,17 +27,48 @@ function updateAvailablity() {
 
 function getDonorInfoJSON() {
     $conn = connect();
-    $sql = $conn->query("SELECT * FROM donor_info");
 
-    if($sql->num_rows === 0) {
+    $sql = 
+        "SELECT donor_login_info.email, donor_info.*
+        FROM donor_info
+        LEFT JOIN donor_login_info
+        ON donor_info.donor_id = donor_login_info.id";
+
+    $rs = $conn->query($sql);
+
+    if($rs->num_rows === 0) {
         return;
     }
     else {
-        while($row = $sql->fetch_assoc()) {
+        while($row = $rs->fetch_assoc()) {
             $donors[] = $row;
         }
         $output = json_encode($donors, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
         file_put_contents("_donor_list.json", $output);
+    }
+}
+
+function getDonationAppointments($sess_id) {
+    $conn = connect();
+
+    $sql =
+        "SELECT donor_info.donor_id, donor_info.name, donor_info.blood_type, donation_appointments.*
+        FROM donor_info
+        RIGHT JOIN donation_appointments
+        ON donation_appointments.donor_id = donor_info.donor_id
+        WHERE hospital_id='$sess_id'";
+
+    $rs = $conn->query($sql);
+
+    if($rs->num_rows === 0) {
+        return;
+    }
+    else {
+        while($row = $rs->fetch_assoc()) {
+            $appointments[] = $row;
+        }
+        $output = json_encode($appointments, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
+        file_put_contents("_appointments.json", $output);
     }
 }
 
@@ -84,7 +115,6 @@ function getUrgentRequests($sess_id) {
     if($get_urgent_rqs->num_rows === 0) {
         echo "<p>No Urgent Requests Yet.</p>";
     }
-    $count = 0;
     while($row = $get_urgent_rqs->fetch_assoc()) {
         // tbc data-type && data-distance
         echo "

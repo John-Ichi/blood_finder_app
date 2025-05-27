@@ -1,7 +1,5 @@
 <?php
 include '_functions.php';
-
-session_start();
 $conn = connect();
 
 if(isset($_SESSION['hospital_email'])) { // if naka login ang hospital
@@ -9,7 +7,7 @@ if(isset($_SESSION['hospital_email'])) { // if naka login ang hospital
 }
 
 if(isset($_SESSION['donor_email'])) { // if naka login ang donor
-    header('Location: donor-dashboard.php'); // go to donor dashboard
+    header('Location: donor-db.php'); // go to donor dashboard
 }
 
 if(isset($_POST['hospital_login'])) {

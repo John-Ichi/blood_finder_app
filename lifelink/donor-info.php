@@ -5,23 +5,25 @@ $conn = connect();
 $current_session = $_SESSION['donor_email'];
 
 if(!$current_session) {
-    header('Location: donor-login.php');
+    header('Location: home.php');
 }
 
-$rs = $conn->query("SELECT * FROM donor_info WHERE email='$current_session'");
+$session_id = "SELECT id FROM donor_login_info WHERE email='$current_session'";
+$get_sess_id = $conn->query($session_id);
+$sess_id = "";
+while($row = $get_sess_id->fetch_assoc()) {
+    $sess_id = $row['id']; // get id of donor
+}
+
+$rs = $conn->query("SELECT * FROM donor_info WHERE donor_id='$sess_id'");
 if($rs->num_rows > 0) {
     header('Location: donor-db.php');
 }
 
 if(isset($_POST['submit'])) {
-    $name = $_POST['name'];
-    $blood_type = $_POST['blood_type'];
-    $address = $_POST['address'];
-    $contact = $_POST['contact'];
-
     $sql = "INSERT INTO
-    donor_info (`email`,`name`,`blood_type`,`address`,`contact`)
-    VALUES ('$_SESSION[donor_email]','$name','$blood_type','$address','$contact')";
+    donor_info (`donor_id`,`name`,`blood_type`,`address`,`contact`)
+    VALUES ('$sess_id','$_POST[name]','$_POST[blood_type]','$_POST[address]','$_POST[contact]')";
     $rs = $conn->query($sql);
     header('Location: donor-db.php');
 }

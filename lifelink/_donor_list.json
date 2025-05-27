@@ -1,35 +1,14 @@
 [
     {
         "email": "dummy-email@gmail.com",
+        "donor_id": "2",
         "name": "John Ichiro Mananquil",
         "blood_type": "A+",
-        "address": "Tanza, Cavite",
+        "address": "Naic, Cavite",
         "last_donation": "No Record",
         "contact": "09951091995",
-        "donor_notes": "Test update No. 1234",
-        "available": "1",
-        "next_available": "2025-05-20"
-    },
-    {
-        "email": "dummy-email2@gmail.com",
-        "name": "Test",
-        "blood_type": "A+",
-        "address": "Naic, Cavite",
-        "last_donation": "No Record",
-        "contact": "09991112222",
         "donor_notes": "",
         "available": "1",
-        "next_available": "2025-05-20"
-    },
-    {
-        "email": "dummy-email3@gmail.com",
-        "name": "Alex Boy",
-        "blood_type": "A+",
-        "address": "Naic, Cavite",
-        "last_donation": "No Record",
-        "contact": "1",
-        "donor_notes": "Hihi",
-        "available": "1",
-        "next_available": "2025-05-20"
+        "next_available": "2025-05-27"
     }
 ]
