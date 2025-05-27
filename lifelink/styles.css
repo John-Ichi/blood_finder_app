@@ -540,6 +540,7 @@ main, .container {
     width: 100%;
 }
 
+
 /* Button Styles */
 .btn {
     padding: 0.5rem 1rem;
@@ -576,12 +577,6 @@ main, .container {
 .btn-outline:hover {
     background-color: var(--primary-light);
     color: white;
-}
-
-/* fill lang muna */
-button.btn.btn-sm.btn-outline.view-details {
-    padding: 0.3rem 0.6rem;
-    font-size: 0.8rem;
 }
 
 .btn-sm {
