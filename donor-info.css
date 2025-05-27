@@ -1,13 +1,13 @@
 :root {
-    --primary: #E21818;
-    --primary-light: #FF597B;
+    --primary: #cf1d1d;
+    --primary-light: #b8b4b4;
     --primary-dark: #8D0D0D;
     --secondary: #FFF5E0;
     --secondary-lighter: #fca0a0bb;
     --dark: #1A1A2E;
     --dark-color: #8d1010;
     --lighter: #F9F9F9;
-    --light: #F9F9F9;
+    --light: #ad3b3ba1;
     --lighter-color: #ff0000a8;
     --accent: #1E6F5C;
     --text: #333333;
@@ -54,6 +54,27 @@ body {
     height: 70px;
 }
 
+.nav-links {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+    margin-left: auto;
+    margin-right: 1rem;
+}
+
+.header {
+    background-color: white;
+    padding: 0 2rem;
+    box-shadow: var(--shadow);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    height: 70px;
+}
+
 .logo {
     display: flex;
     align-items: center;
@@ -70,10 +91,8 @@ body {
 
 .nav-links {
     display: flex;
-    gap: 1.5rem;
+    gap: 1.8rem;
     align-items: center;
-    margin-left: auto;
-    margin-right: 1rem;
 }
 
 .nav-links a {
@@ -119,8 +138,8 @@ body {
 
 .ham-menu span {
     display: block;
-    width: 100%;
     height: 3px;
+    width: 100%;
     background-color: var(--primary);
     border-radius: 2px;
     transition: var(--transition);
@@ -138,7 +157,6 @@ body {
     transform: translateY(-10px) rotate(-45deg);
 }
 
-/* Off-screen menu styles */
 .off-screen-menu {
     position: fixed;
     top: 0;
@@ -146,10 +164,12 @@ body {
     width: 250px;
     height: 100vh;
     background-color: white;
-    border-right: 1px solid #eee;
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
     z-index: 9000;
     transition: var(--transition);
-    padding-top: 60px;
+    padding-top: 80px;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .off-screen-menu.active {
@@ -159,7 +179,6 @@ body {
 .off-screen-menu ul {
     list-style: none;
     padding: 0;
-    margin: 0;
 }
 
 .off-screen-menu ul li {
@@ -168,50 +187,16 @@ body {
     font-weight: 500;
     cursor: pointer;
     transition: var(--transition);
-    color: #333;
-    background-color: white;
-}
-
-.off-screen-menu ul li.active {
-    color: var(--primary);
 }
 
 .off-screen-menu ul li:hover {
-    background-color: var(--primary);
-    color: white;
-}
-
-.off-screen-menu .close-btn {
-    position: absolute;
-    top: 15px;
-    right: 15px;
+    background-color: #f9f9f9;
     color: var(--primary);
-    font-size: 20px;
-    cursor: pointer;
-    transition: var(--transition);
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: white;
-}
-
-.off-screen-menu .close-btn:hover {
-    transform: scale(1.1);
-}
-
-.off-screen-menu::before {
-    display: none;
+    padding-left: 35px;
 }
 
 body.menu-open {
-    overflow: visible;
-}
-
-.ham-menu {
-    position: relative;
-    z-index: 9500;
+    overflow: hidden;
 }
 
 a {
@@ -281,60 +266,49 @@ img {
 
 .progress ul.progress-steps li {
     display: flex;
-    flex-direction: row;
+    flex-direction: row; 
     align-items: center;
     position: relative;
     margin-bottom: 2em;
     min-width: 200px;
 }
 
-.progress ul.progress-steps li .step-number {
+.progress ul.progress-steps li > span {
     width: 40px;
     height: 40px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    background-color: #b8b4b4;
-    margin-right: 1em;
+    background-color: var(--primary-light);
+    margin-right: 1em; 
     z-index: 1;
-    color: white;
+    color: inherit; 
 }
 
-.progress ul.progress-steps li.active .step-number {
+.progress ul.progress-steps li > div.text-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.progress ul.progress-steps li > div.text-content p,
+.progress ul.progress-steps li > div.text-content span {
+    margin: 0;
+    padding: 0;
+}
+
+.progress ul.progress-steps li.active > span {
     color: white;
     background-color: var(--primary);
     border: 4px solid var(--secondary-lighter);
     z-index: 1;
 }
 
-.progress ul.progress-steps li p {
-    position: relative;
-    margin: 0;
-    font-weight: 500;
-    color: #777777;
-}
-
-.progress ul.progress-steps li.active p {
-    color: var(--text);
-}
-
-.progress ul.progress-steps li p .step-description {
-    display: block;
+.progress ul.progress-steps li p span {
     font-size: smaller;
-    color: #777777;
-    font-weight: normal;
-}
-
-.progress ul.progress-steps li:not(:last-child)::before {
-    content: '';
-    position: absolute;
-    top: 40px;
-    left: 20px;
-    width: 2px;
-    height: 60px;
-    background-color: #b8b4b4;
-    z-index: 0;
+    color: var(--light);
+    display: none;
 }
 
 .progress ul li p {
@@ -356,7 +330,7 @@ form > div {
 }
 
 form > div p {
-    color: #ff0000a8;
+    color: var(--light);
     margin-bottom: 2em;
 }
 
@@ -458,41 +432,18 @@ form > div.active {
     color: #77777791;
 }
 
-/* Media queries */
-@media screen and (max-width: 768px) {
+/* Mobile responsive */
+@media screen and (max-width: 767px) {
     .nav-links {
         display: none;
     }
     
     .ham-menu {
         display: flex;
-        margin-left: auto;
-    }
-
-    .form-box {
-        flex-direction: column;
-    }
-    
-    .form-box .progress {
-        flex: none;
-        padding: 2em;
-    }
-    
-    .progress ul.progress-steps {
-        flex-direction: column;
-        gap: 0;
     }
 }
 
-@media screen and (min-width: 769px) {
-    .ham-menu {
-        display: flex;
-    }
-    
-    .nav-links {
-        display: flex;
-    }
-
+@media screen and (min-width: 768px) {
     .form-box {
         flex-direction: row;
     }
@@ -511,12 +462,17 @@ form > div.active {
     .progress ul.progress-steps li:not(:last-child)::before {
         content: '';
         position: absolute;
-        top: 40px;
-        left: 20px;
+        top: 40px; 
+        left: 20px; 
         width: 2px;
-        height: 60px;
-        background-color: #b8b4b4;
+        height: 60px; 
+        background-color: var(--primary-light);
         z-index: 0;
+    }
+    
+    .form-box form {
+        padding: 3em;
+        border-radius: 0 15px 15px 0;
     }
     
     .progress ul li p {
@@ -525,7 +481,7 @@ form > div.active {
         font-size: inherit;
     }
     
-    .progress ul.progress-steps li p .step-description {
+    .progress ul.progress-steps li p span {
         display: block;
     }
 }
