@@ -2,25 +2,25 @@
 include '_functions.php';
 $conn = connect();
 
-$current_session = $_SESSION['donor_email'];
+$current_session = $_SESSION['donor_email']; // get current logged in
 
 if(!$current_session) {
-    header('Location: home.php');
+    header('Location: home.php'); // if not logged in return to home
 }
 
 $session_id = "SELECT id FROM donor_login_info WHERE email='$current_session'";
 $get_sess_id = $conn->query($session_id);
 $sess_id = "";
 while($row = $get_sess_id->fetch_assoc()) {
-    $sess_id = $row['id']; // get id of donor
+    $sess_id = $row['id']; // get user id
 }
 
 $rs = $conn->query("SELECT * FROM donor_info WHERE donor_id='$sess_id'");
 if($rs->num_rows > 0) {
-    header('Location: donor-db.php');
+    header('Location: donor-db.php'); // if may info na deretso db
 }
 
-if(isset($_POST['submit'])) {
+if(isset($_POST['submit'])) { // submit donor information [name, blood type, address, contact] 
     $province = $_POST['province'];
     $municipality = $_POST['municipality'];
     $address = $municipality . ", " . $province;
@@ -43,14 +43,13 @@ if(isset($_POST['submit'])) {
     <title>LifeLink</title>
 </head>
 <body>
-    
+    <!-- header -->
     <header class="header">
         <a href="#" class="logo">
             <i class="fas fa-heartbeat"></i>
             <span>LifeLink</span>
         </a>
         <div class="nav-links">
-            <!--<a href="#">Home</a>-->
             <a href="donors.php">Donors</a>
             <a href="#">Blood Banks</a>
         </div>
@@ -69,6 +68,7 @@ if(isset($_POST['submit'])) {
         </div>
     </header>
 
+    <!-- form -->
     <div id="page" class="site">
         <div class="containers">
             <div class="form-box">
@@ -102,20 +102,9 @@ if(isset($_POST['submit'])) {
                             <circle cx="50" cy="35" r="20" fill="#cf1d1d"/>
                             <path d="M20 85 C20 65, 35 55, 50 55 C65 55, 80 65, 80 85 L20 85" fill="#cf1d1d"/>
                         </svg>
+                        <!-- get name -->
                         <h2>Name</h2>
                         <p>Enter your name correctly</p>
-                    <!--<div>
-                            <label>First Name</label>
-                            <input type="text" placeholder="e.g. Mike">
-                        </div>
-                        <div>
-                            <label>Middle Name</label>
-                            <input type="text" placeholder="e.g. Garcia">
-                        </div>
-                        <div>
-                            <label>Last Name</label>
-                            <input type="text" placeholder="e.g. Mananquil">
-                        </div>-->
                         <div>
                             <input type="text" name="name" id="name" placeholder="e.g. Ceejay Cervantes">
                         </div>
@@ -125,10 +114,10 @@ if(isset($_POST['submit'])) {
                             <title>Blood Drop</title>
                             <path d="M50 15 C50 15, 20 45, 20 70 C20 85, 32.5 90, 50 90 C67.5 90, 80 85, 80 70 C80 45, 50 15, 50 15Z"/>
                         </svg>
+                        <!-- get blood type -->
                         <h2>Blood Type</h2>
                         <p>Select your blood type</p>
                         <div>
-                        <!--<label>BloodType</label>-->
                             <select name="blood_type" id="bloodtype">
                                 <option value="" selected style="display: none;">Select</option>
                                 <option value="A+">A+</option>
@@ -149,6 +138,7 @@ if(isset($_POST['submit'])) {
                             <rect x="30" y="20" width="40" height="50" rx="2" ry="2" fill="white"/>
                             <circle cx="50" cy="80" r="4" fill="white"/>
                         </svg>
+                        <!-- get contact -->
                         <h2>Contact</h2>
                         <p>How can we reach you?</p>
                         <div>
@@ -162,20 +152,9 @@ if(isset($_POST['submit'])) {
                             <path d="M50 10 C30 10, 10 30, 10 50 C10 80, 50 90, 50 90 C50 90, 90 80, 90 50 C90 30, 70 10, 50 10Z"/>
                             <circle cx="50" cy="50" r="15" fill="white"/>
                         </svg>
+                        <!-- get address -->
                         <h2>Address</h2>
                         <p>Let us know where to find you</p>
-                    <!--<div>
-                            <label>Barangay/Subdivision</label>
-                            <input type="text" placeholder="e.g. Barangay San Vicente">
-                        </div>    
-                        <div>
-                            <label>House Number/Street Address</label>
-                            <input type="text" placeholder="House Number/Street Address">
-                        </div>
-                        <div>
-                            <label>Region</label>
-                            <input type="text" placeholder="e.g. Region 4A">
-                        </div>-->
                         <div>
                             <label>Province</label>
                             <input type="text" name="province" id="province" placeholder="e.g. Metro Manila">
@@ -184,15 +163,6 @@ if(isset($_POST['submit'])) {
                             <label>Municipality/City</label>
                             <input type="text" name="municipality" id="municipality" placeholder="e.g. Cavite">
                         </div>
-                    <!--<div>
-                            <label>Postal Code</label>
-                            <input type="text" placeholder="Postal Code">
-                        </div>-->
-                        
-                    <!--<div>
-                            <label>Country</label>
-                            <input type="text" placeholder="e.g. Philippines">
-                        </div>-->
                     </div>
                     <div class="btn-group">
                         <button type="button" class="btn-prev" disabled>Back</button>

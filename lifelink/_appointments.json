@@ -5,20 +5,42 @@
         "blood_type": "A+",
         "donation_id": "12",
         "date_of_donation": "2025-05-27",
-        "preferred_time": "evening",
+        "preferred_time": "Evening",
         "hospital_id": "2",
         "additional_info": "None to report",
-        "status": "completed"
+        "status": "Approved"
+    },
+    {
+        "donor_id": "2",
+        "name": "John Ichiro Mananquil",
+        "blood_type": "A+",
+        "donation_id": "16",
+        "date_of_donation": "2025-05-29",
+        "preferred_time": "Morning",
+        "hospital_id": "2",
+        "additional_info": "123",
+        "status": "Approved"
     },
     {
         "donor_id": "4",
-        "name": "dummy donor 2",
+        "name": "Dummy Donor 2",
         "blood_type": "B-",
         "donation_id": "15",
         "date_of_donation": "2025-05-29",
-        "preferred_time": "afternoon",
+        "preferred_time": "Afternoon",
         "hospital_id": "2",
         "additional_info": "Test 123.",
-        "status": "pending"
+        "status": "Approved"
+    },
+    {
+        "donor_id": "4",
+        "name": "Dummy Donor 2",
+        "blood_type": "B-",
+        "donation_id": "17",
+        "date_of_donation": "2025-05-30",
+        "preferred_time": "Morning",
+        "hospital_id": "2",
+        "additional_info": "Test",
+        "status": "Approved"
     }
 ]

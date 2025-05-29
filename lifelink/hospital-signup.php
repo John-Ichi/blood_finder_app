@@ -2,10 +2,6 @@
 include '_functions.php';
 $conn = connect();
 
-/* if(isset($_SESSION['email'])) {
-    header('Location: user-dashboard.php');
-} */
-
 if(isset($_POST['hospital_signup'])) {
     $email = $_POST['hospital_email']; 
     $password = $_POST['password'];

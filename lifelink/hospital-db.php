@@ -422,6 +422,31 @@ if(isset($_POST['update_password'])) {
         </div>
     </div>
 
+    <div class="modal" id="completionForm">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Completion Form</h2>
+        </div>
+        <div class="completion-form">
+            <form>
+                Date of completion:
+                <br><input type="date"><br>
+                Time of extraction:
+                <br><input type="time"><br>
+                Units Extracted:
+                <br><input type="num"><br>
+                Blood Form Factor:
+                <br>
+                <select>
+                    <option value="">Whole Blood</option>
+                </select>
+        </div>
+        <div class="modal-actions">
+            <button type="submit">Confirm</button>
+            </form>
+        </div>
+    </div>
+
     <script src="hospital-db.js"></script>
 </body>
 </html>

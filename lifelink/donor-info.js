@@ -1,7 +1,9 @@
+// restart page
 if (window.history.replaceState) {
     window.history.replaceState(null, null, window.location.href);
 }
 
+// initialize burger
 const hamMenu = document.querySelector('.ham-menu');
 const offScreenMenu = document.querySelector('.off-screen-menu');
 const body = document.body;
@@ -36,11 +38,12 @@ menuItems.forEach(item => {
         offScreenMenu.classList.remove('active');
         const menuText = this.textContent.trim().toLowerCase();
             
-        // Show home if home
         if (menuText === 'home') {
-            window.location.href = "home.php";
-        } else if (menuText === 'login') { // Check login para deretso sa dashboard if may session
-            checkLogin(); // Show login if login
+            window.location.href = "home.php"; // home
+        } else if (menuText === 'login') { // check login para deretso sa dashboard if may session
+            checkLogin(); // show login if login
+        } else if (menuText === 'logout') {
+            window.location.href = "_logout.php"; // logout
         }
     });
 });
@@ -56,11 +59,12 @@ const contactField = document.getElementById('contact');
 const provinceField = document.getElementById('province');
 const municipalityField = document.getElementById('municipality');
 
-let active = 1;
+let active = 1; // step number
 
+// next button
 nextButton.addEventListener('click', () => {
-    if (active == 1) {
-        if (!nameField.value) {
+    if (active == 1) { // step number 1
+        if (!nameField.value) { // check if empty
             alert('Please enter your name.');
         } else {
             active++;
@@ -68,27 +72,26 @@ nextButton.addEventListener('click', () => {
                 active = steps.length;
                 console.log(active);
             }
-            updateProgress();
+            updateProgress(); // go to step 2
         }
-    } else if (active == 2) {
-        if (bloodTypeField.value == '') {
+    } else if (active == 2) { // step 2
+        if (bloodTypeField.value == '') { // check if empty
             alert('Please select a blood type.');
         } else {
             active++;
             if (active > steps.length) {
                 active = steps.length;
             }
-            updateProgress();
-            return;
+            updateProgress(); // go to step 3
         }
-    } else if (active == 3) {
+    } else if (active == 3) { // step 3
         contactNumber = contactField.value;
-        firstDigit = contactNumber.charAt(0);
-        secondDigit = contactNumber.charAt(1);
+        firstDigit = contactNumber.charAt(0); // get first digit
+        secondDigit = contactNumber.charAt(1); // get second digit
         
-        if (!contactNumber) {
+        if (!contactNumber) { // check if empty
             alert('Please enter your phone number.');
-        } else if (firstDigit != '0' || secondDigit != '9' || contactNumber.length != 11) {
+        } else if (firstDigit != '0' || secondDigit != '9' || contactNumber.length != 11) { // validate phone number [starts in 09]
             alert('Please enter a valid 11-digit number.');
         } else {
             active++;
@@ -96,12 +99,11 @@ nextButton.addEventListener('click', () => {
                 active = steps.length;
             }
             updateProgress();
-            return;
         }
     }
 });
 
-prevButton.addEventListener('click', () => {
+prevButton.addEventListener('click', () => { // prev button
     active--;
     if (active < 1) {
         active = 1;
@@ -111,14 +113,14 @@ prevButton.addEventListener('click', () => {
 
 const submitButton = document.querySelector('.btn-submit');
 
-submitButton.addEventListener('click', (e) => {
-    if (active == 4) {
-        if (!provinceField.value) {
+submitButton.addEventListener('click', (e) => { // submit
+    if (active == 4) { // step 4
+        if (!provinceField.value) { // check if empty
             alert('Please enter your province.');
-            e.preventDefault();
-        } else if (!municipalityField.value) {
+            e.preventDefault(); // prevent submit
+        } else if (!municipalityField.value) { // check if empty
             alert('Please enter your municipality.');
-            e.preventDefault();
+            e.preventDefault(); // prevent submit
         }
     }
 });

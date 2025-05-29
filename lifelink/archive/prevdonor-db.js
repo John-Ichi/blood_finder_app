@@ -23,8 +23,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize modals
     initializeModals();
-
-    showAppointmentDetails();
     
     // Initialize request actions
     initializeRequestActions();
@@ -163,14 +161,6 @@ document.addEventListener('DOMContentLoaded', function() {
     function closeAllModals() {
         document.querySelectorAll('.modal').forEach(modal => {
             modal.style.display = 'none';
-        });
-    }
-
-    function showAppointmentDetails() {
-        const showBtn = document.querySelector('.view-appointment-details');
-        showBtn.addEventListener('click', function() {
-            let appointmentDetailsModal = document.getElementById('appointmentDetailsModal');
-            appointmentDetailsModal.style.display = 'flex';
         });
     }
     

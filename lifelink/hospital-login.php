@@ -6,9 +6,9 @@ if(isset($_SESSION['hospital_email'])) { // if naka login ang hospital
     header('Location: hospital-db.php'); // go to hospital dashboard
 }
 
-if(isset($_SESSION['donor_email'])) { // if naka login ang donor
+/*if(isset($_SESSION['donor_email'])) { // if naka login ang donor
     header('Location: donor-db.php'); // go to donor dashboard
-}
+}*/
 
 if(isset($_POST['hospital_login'])) {
     $email = $_POST['hospital_email'];

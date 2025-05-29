@@ -39,7 +39,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (!hamMenu.contains(e.target) && !offScreenMenu.contains(e.target) && offScreenMenu.classList.contains('active')) {
                 hamMenu.classList.remove('active');
                 offScreenMenu.classList.remove('active');
-                body.classList.remove('menu-open');
             }
         });
  
@@ -47,7 +46,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (e.key === 'Escape' && offScreenMenu.classList.contains('active')) {
                 hamMenu.classList.remove('active');
                 offScreenMenu.classList.remove('active');
-                body.classList.remove('menu-open');
             }
         });
     } else {

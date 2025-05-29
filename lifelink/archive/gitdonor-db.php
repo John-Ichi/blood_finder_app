@@ -16,43 +16,41 @@ while($row = $get_sess_id->fetch_assoc()) {
 }
 
 updateAvailablity();
+$session_info = "SELECT * FROM donor_info WHERE donor_id='$sess_id'";
 
-$userinfo = getSessionInfo($sess_id);
-$name = $userinfo[0]['name'];
-$contact = $userinfo[0]['contact'];
-$location = $userinfo[0]['address'];
-$blood_type = $userinfo[0]['blood_type'];
-$donor_notes = $userinfo[0]['donor_notes'];
-$last_donation = $userinfo[0]['last_donation'];
-$next_available = $userinfo[0]['next_available'];
+$check_sess_info = $conn->query($session_info);
+if($check_sess_info->num_rows === 0) { // if wala pang details e.g. after account creation
+    header('Location: donor-info.php'); // complete details
+}
 
+$name = "";
+$contact = "";
+$location = "";
+$blood_type = "";
+$donor_notes = "";
+$last_donation = "";
+$next_available = "";
 
-
-// get recent appointment details
-$appt_details = getRecentAppointmentDetails($sess_id);
-$appt_loc = $appt_details[0]['name'];
-$appt_cont = $appt_details[0]['contact'];
-$appt_date = $appt_details[0]['date_of_donation'];
-$appt_time = $appt_details[0]['preferred_time'];
-$appt_status = $appt_details[0]['status'];
-
-// get last donation history
-$sql = "SELECT date_completed FROM donation_history WHERE donor_id='$sess_id' ORDER BY history_id DESC LIMIT 1";
-$query = $conn->query($sql);
-$data = $query->fetch_assoc();
-$completion_date = $data['date_completed'];
-
-$new_date = date_create($completion_date);
-$date = date_format($new_date, "F j, Y");
+$get_sess_info = $conn->query($session_info);
+while ($row = $get_sess_info->fetch_assoc()) { // set current session info
+    $name = $row['name'];
+    $contact = $row['contact'];
+    $location = $row['address'];
+    $blood_type = $row['blood_type'];
+    $donor_notes = $row['donor_notes'];
+    $last_donation = $row['last_donation'];
+    $next_available = $row['next_available'];
+}
 
 if (isset($_POST['update'])) { // update information function
     $sql = "UPDATE `donor_info` SET
     `name`='$_POST[name]',
+    `email`='$_POST[email]',
     `contact`='$_POST[contact]',
     `address`='$_POST[address]',
     `donor_notes`='$_POST[donor_notes]'
     WHERE
-    `donor_id`='$sess_id'";
+    `email`='$current_session'";
     $rs = $conn->query($sql);
     header('Location: donor-db.php');
 }
@@ -85,7 +83,6 @@ if(isset($_POST['donation_appointment'])) { // donation appointment function
     <link rel="icon" href="resources/heartbeat-solid.svg">
 </head>
 <body>
-    
     <!-- Top Navigation -->
     <header class="header">
         <a href="home.php" class="logo">
@@ -140,6 +137,7 @@ if(isset($_POST['donation_appointment'])) { // donation appointment function
                 <div class="hero">
                     <h1>Save Lives Through Blood Donation</h1>
                     <p>Join our community of donors and help patients in need across the Philippines. Your single donation can save up to three lives.</p>
+                    <!--<div style="display: flex; gap: 0.8rem; justify-content: center;"></div>-->
                 </div>
 
                 <div class="card-row">
@@ -199,23 +197,22 @@ if(isset($_POST['donation_appointment'])) { // donation appointment function
                                 <h2>Donation Appointment</h2>
                                 <i class="fas fa-tint" style="color: var(--primary); font-size: 1.5rem;"></i>
                             </div>
-                            <div class="donation-status" style="margin: 1rem;">
-                                
+                            <div style="text-align: center; margin: 1rem;">
                                 <?php
-                                if($appt_status === 'Pending' || $appt_status === 'Approved') {
+                                $status = getRecentAppointmentStatus($sess_id);
+                                if($status === 'pending') {
+                                    echo "<p class='urgent-tag' style='color: var(--primary-dark); font-weight: bold; text-align: center'>Ongoing Appointment Request</p>";
+                                    // need ng function to view, paliitin
                                     echo "
-                                    <div class='status-badge status-pending' style='text-align: center;'>
-                                        <i class='fas fa-clock'></i> Ongoing Appointment
-                                        
-                                        <button class='btn btn-outline btn-sm view-appointment-details'>View Details</button>
-                                    </div>  
+                                        <div class='form-details'>
+                                            <button class='btn btn-sm btn-outline view-details'>View Details</button>
+                                        </div>
                                     ";
                                 }
                                 ?>
-
                             </div>
                             <form id="donationForm" method="POST">
-                                <fieldset <?php if($appt_status === 'Pending' || $appt_status === 'Approved') {echo 'disabled';}?>>
+                                <fieldset <?php if($status === 'pending') {echo 'disabled';}?>>
                                     <div class="form-group">
                                         <label for="donationDate">Preferred Donation Date</label>
                                         <input type="date" id="donationDate" class="form-control" name="date_of_donation" required>
@@ -283,19 +280,17 @@ if(isset($_POST['donation_appointment'])) { // donation appointment function
                                 </div>
                             </div>
                         </div>
-                        <ul class="request-list" id="requestsList">
-                            <?php getDonorRequests($sess_id); ?> <!-- display requests -->
-                        </ul>
+                        <ul class="request-list" id="requestsList"><?php getDonorRequests($sess_id); ?><!-- display requests --></ul>
                     </section>
                 </div>
             </section>
 
             <!-- Profile Page -->
             <section class="page" id="profile-page">
-            <!--<div class="hero">
+                <div class="hero">
                     <h1>My Profile</h1>
                     <p>Manage your account information and donation history.</p>
-                </div>-->
+                </div>
 
                 <div class="card-row">
                 <!-- Personal Information Card -->    
@@ -350,7 +345,6 @@ if(isset($_POST['donation_appointment'])) { // donation appointment function
                         <i class="fas fa-history" style="color: var(--primary); font-size: 1.3rem;"></i>
                     </div>
                     <ul class="request-list" style="max-height: 465px; overflow-y: auto;">
-                        <?php getDonorDBDonationHistory($sess_id); ?>
                         <li class="request-item">
                             <div class="request-info">
                                 <h3>March 15, 2023</h3>
@@ -409,27 +403,6 @@ if(isset($_POST['donation_appointment'])) { // donation appointment function
     </div>
 
     <!-- Modals -->
-
-    <!-- Donation Details Modal -->
-    <div class="modal" id="appointmentDetailsModal">
-        <div class="modal-content">
-            <span class="close-modal">&times;</span>
-            <h2>Appointment Details</h2>
-            <div class="appointment-details">
-                <p><strong>Status:</strong> <span id="appointmentStatus"><?php echo $appt_status?></span></p>
-                <p><strong>Date:</strong> <span id="appointmentDate"><?php echo $appt_date?></span></p>
-                <p><strong>Time:</strong> <span id="appointmentTime"><?php echo $appt_time?></span></p>
-                <p><strong>Location:</strong> <span id="appointmentLocation"><?php echo $appt_loc?></span></p>
-            <!--<p><strong>Blood Type:</strong> <span id="appointmentBloodType">Not specified</span></p>
-                <p><strong>Notes:</strong> <span id="appointmentNotes">No additional notes provided.</span></p>-->
-            </div>
-            <div class="modal-actions" style="margin-top: 1.2rem;">
-        <!--<button class="btn btn-primary" id="editAppointment">Edit Appointment</button>-->
-            <button class="btn btn-outline" style="margin-left: 0.5rem;" id="cancelAppointment">Cancel Appointment</button>
-            </div>
-        </div>
-    </div>
-
     <!-- Request Details Modal -->
     <div class="modal" id="requestModal">
         <div class="modal-content">
@@ -449,6 +422,32 @@ if(isset($_POST['donation_appointment'])) { // donation appointment function
             <div class="modal-actions" style="margin-top: 1.2rem;">
                 <button class="btn btn-primary" id="confirmAccept">Accept Request</button>
                 <button class="btn btn-outline" style="margin-left: 0.5rem;" id="saveForLater">Save for Later</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Donation Details Modal -->
+    <div class="modal" id="donationDetailsModal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Donation Details</h2>
+            <div class="donation-details">
+                <p><strong>Date:</strong> <span id="detailDate"></span></p>
+                <p><strong>Location:</strong> <span id="detailLocation"></span></p>
+                <p><strong>Blood Type:</strong> <span id="detailType"></span></p>
+                <p><strong>Surgery Type:</strong> <i class="fas fa-procedures"></i> <span id="detailSurgery"></span></p>
+                <p><strong>Notes:</strong> <span id="detailNotes"></span></p>
+            </div>
+            <button class="btn btn-primary" id="closeDetailsBtn">Close</button>
+        </div>
+    </div>
+    
+    <div class="modal" id="appointmentDetailsModal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Appointment Details</h2>
+            <div class="appointment-details">
+                <p>Paragraph</p>
             </div>
         </div>
     </div>

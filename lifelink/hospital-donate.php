@@ -30,9 +30,9 @@ if(isset($_POST['submit'])) {
     '$expiration',
     2)";
 
-    for($i = 0; $i < $qty; $i++) {
+    /* for($i = 0; $i < $qty; $i++) {
         $conn->query($sql);
-    }
+    } */
 }
 ?>
 <!DOCTYPE html>

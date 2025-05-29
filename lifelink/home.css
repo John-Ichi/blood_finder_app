@@ -72,7 +72,7 @@ h3 { font-size: 1.5rem; }
     margin-right: 1rem;
 }
 
-.header, .top-nav {
+.header {
     background-color: white;
     padding: 0 2rem;
     box-shadow: var(--shadow);
@@ -99,13 +99,13 @@ h3 { font-size: 1.5rem; }
     font-size: 1.5rem;
 }
 
-.nav-links, .top-nav-links {
+.nav-links {
     display: flex;
     gap: 1.8rem;
     align-items: center;
 }
 
-.nav-links a, .top-nav-links a {
+.nav-links a {
     color: var(--text);
     text-decoration: none;
     font-weight: 500;
@@ -115,11 +115,11 @@ h3 { font-size: 1.5rem; }
     font-size: 1rem;
 }
 
-.nav-links a:hover, .top-nav-links a:hover {
+.nav-links a:hover {
     color: var(--primary);
 }
 
-.nav-links a::after, .top-nav-links a::after {
+.nav-links a::after {
     content: '';
     position: absolute;
     bottom: 0;
@@ -130,18 +130,8 @@ h3 { font-size: 1.5rem; }
     transition: var(--transition);
 }
 
-.nav-links a:hover::after, .top-nav-links a:hover::after {
+.nav-links a:hover::after {
     width: 100%;
-}
-
-.top-nav-links a::after {
-    left: 50%;
-    transition: width 0.3s ease, left 0.3s ease;
-}
-
-.top-nav-links a:hover::after {
-    width: 80%;
-    left: 10%;
 }
 
 .btn {

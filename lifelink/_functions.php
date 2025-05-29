@@ -135,7 +135,7 @@ function getUrgentRequests($sess_id) {
     }
 }
 
-function getMostRecentAppointment($sess_id) {
+/* function getRecentAppointmentStatus($sess_id) {
     $conn = connect();
     $most_recept_appt = "SELECT * FROM donation_appointments WHERE donor_id='$sess_id' ORDER BY donation_id DESC LIMIT 1";
     $get = $conn->query($most_recept_appt);
@@ -147,6 +147,83 @@ function getMostRecentAppointment($sess_id) {
             $status = $row['status'];
         }
         return $status;
+    }
+}
+
+function getRecentAppointmentDetails($sess_id) {
+    $conn = connect();
+    $sql = "SELECT * FROM donation_appointments WHERE donor_id='$sess_id' ORDER BY donation_id DESC LIMIT 1";
+    $get = $conn->query($sql);
+    if($get->num_rows === 0) {
+        return;
+    }
+    else {
+        while($row = $get->fetch_assoc()) {
+            $status[] = $row;
+        }
+        return $status;
+    }
+} */
+
+function getRecentAppointmentDetails($sess_id) {
+    $conn = connect();
+    $sql =
+        "SELECT hospital_info.name, hospital_info.contact, donation_appointments.*
+        FROM donation_appointments
+        LEFT JOIN hospital_info
+        ON donation_appointments.hospital_id = hospital_info.id
+        WHERE donor_id='$sess_id'
+        ORDER BY donation_id
+        DESC LIMIT 1";
+    $get = $conn->query($sql);
+    if($get->num_rows === 0) {
+        return;
+    } else {
+        while($row = $get->fetch_assoc()) {
+            $appt[] = $row; 
+        }
+        return $appt;
+    }
+}
+
+function getSessionInfo($sess_id) {
+    $conn = connect();
+    $sql = "SELECT * FROM donor_info WHERE donor_id='$sess_id'";
+    $get = $conn->query($sql);
+    if($get->num_rows === 0) { // if wala pang details e.g. after account creation
+        header('Location: donor-info.php'); // complete details
+        return;
+    } else {
+        while($row = $get->fetch_assoc()) {
+            $userinfo[] = $row;
+        }
+        return $userinfo;
+    }
+}
+
+function getDonorDBDonationHistory($sess_id) {
+    $conn = connect();
+    $sql =
+        "SELECT hospital_info.name, donation_history.*
+        FROM donation_history
+        LEFT JOIN hospital_info
+        ON donation_history.hospital_id = hospital_info.id
+        WHERE donor_id='$sess_id'";
+    $rs = $conn->query($sql);
+    while($row = $rs->fetch_assoc()) {
+        
+        $completion_date = date_create($row['date_completed']);
+        $date = date_format($completion_date, "F j, Y");
+
+        echo "
+            <li class='request-item'>
+                <div class='request-info'>
+                    <h3>" . $date . "</h3>
+                    <p><i class='fas fa-map-marker-alt'></i> " . $row['name'] . "</p>
+                    <p>Time of Extraction: Insert Time</p>
+                </div>
+            </li>
+        ";
     }
 }
 

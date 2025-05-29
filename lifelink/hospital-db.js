@@ -283,17 +283,17 @@ document.addEventListener('DOMContentLoaded', function() {
             appointmentItem.dataset.id = appointment.donation_id;
             
             let actionsHTML = '';
-            if (appointment.status === 'pending') {
+            if (appointment.status === 'Pending') {
                 actionsHTML = `
-                    <form method="GET" action="_appointment.php">
+                    <form method="GET" action="_appointments.php">
                         <input type="text" name="donation_id" value="${appointment.donation_id}" style="display: none;">
                         <button type="submit" class="btn-approve" data-id="${appointment.donation_id}" name="approve" value="true">Approve</button>
                         <button type="submit" class="btn-reject" data-id="${appointment.donation_id}" name="reject" value="true">Reject</button>
                     </form>
                 `;
-            } else if (appointment.status === 'approved') {
+            } else if (appointment.status === 'Approved') {
                 actionsHTML = `
-                    <form method="GET" action="_appointment.php">
+                    <form method="GET" action="_appointments.php">
                         <input type="text" name="donation_id" value="${appointment.donation_id}" style="display: none;"> 
                         <button type="submit" class="btn-complete" data-id="${appointment.donation_id}" name="complete" value="true">Mark as Completed</button>
                         <button type="submit" class="btn-cancel" data-id="${appointment.donation_id}" name="reject" value="true">Cancel</button>
@@ -312,8 +312,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 <div class="appointment-info">
                     <h3>${appointment.name}</h3>
                     <p><strong>Blood Type:</strong> ${appointment.blood_type}</p>
-                    <p><strong>${appointment.status === 'pending' ? 'Requested' : 
-                                appointment.status === 'approved' ? 'Scheduled' : 'Donation'} Date:</strong> ${formattedDate}</p>
+                    <p><strong>${appointment.status === 'Pending' ? 'Requested' : 
+                                appointment.status === 'Approved' ? 'Scheduled' : 'Donation'} Date:</strong> ${formattedDate}</p>
                     <p><strong>Status:</strong> ${capitalizeFirstLetter(appointment.status)}</p>
                     ${unitsInfo}
                 </div>
@@ -500,7 +500,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const existingRequests = requestContainer.querySelectorAll('.request-item');
         existingRequests.forEach(request => request.remove());
         
-        const pendingRequests = urgentRequests.filter(request => request.status === 'pending');
+        const pendingRequests = urgentRequests.filter(request => request.status === 'Pending');
         
         if (pendingRequests.length === 0) {
             const noResults = document.createElement('div');
@@ -584,7 +584,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function updateDashboard() {
         const totalUnits = bloodInventory.reduce((sum, item) => sum + item.units, 0);
         const criticalTypes = bloodInventory.filter(item => item.status === 'Critical');
-        const pendingAppointments = appointments.filter(a => a.status === 'pending' || a.status === 'approved');
+        const pendingAppointments = appointments.filter(a => a.status === 'Pending' || a.status === 'Approved');
         
         document.querySelectorAll('.stat-card').forEach(card => {
             const title = card.querySelector('h3').textContent;
@@ -596,7 +596,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 card.querySelector('.stat-info').textContent = criticalTypes.map(item => item.type).join(', ') || 'None';
             } else if (title === 'Pending Appointments') {
                 card.querySelector('.stat-value').textContent = pendingAppointments.length.toString();
-                card.querySelector('.stat-info').textContent = `${urgentRequests.filter(r => r.status === 'pending').length} urgent requests`;
+                card.querySelector('.stat-info').textContent = `${urgentRequests.filter(r => r.status === 'Pending').length} urgent requests`;
             }
         });
         
