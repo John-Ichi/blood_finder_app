@@ -3,6 +3,8 @@ if (window.history.replaceState) {
     window.history.replaceState(null, null, window.location.href);
 }
 
+console.log(window.location.href);
+
 document.addEventListener('DOMContentLoaded', function() {
     // AJAX: Check if naka login si user
     function checkLogin() {
@@ -63,9 +65,17 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Show home if home
             if (menuText === 'home') {
-                showPage('home');
+                if (window.location.href === "http://localhost/lifelink/home.php") {
+                return;
+            } else {
+                window.location.href = "home.php";
+            }
             } else if (menuText === 'login') { // Check login para deretso sa dashboard if may session
                 checkLogin(); // Show login if login
+            } else if (menuText === 'about us') {
+                alert("Ceejay Cervantes, Allen Dinglas, John Ichiro Mananquil");
+            } else if (menuText === 'contact') {
+                alert("Insert LifeLink Team Contact");
             }
         });
     });
@@ -118,6 +128,7 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => {
             formPopup.style.display = 'none';
             blurOverlay.style.display = 'none';
+            forgotForm.style.display = 'none';
         }, 300);
     }
 
@@ -185,6 +196,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // IDK
     const signupFormElement = document.querySelector('.form-box.signup form');
     const loginFormElement = document.querySelector('.form-box.login form');
+    const forgotFormElement = document.querySelector('.form-box.forgot form');
 
     function setupInputFields(form) {
         if (!form) return;
@@ -227,11 +239,15 @@ document.addEventListener('DOMContentLoaded', function() {
     
     setupInputFields(loginFormElement);
     setupInputFields(signupFormElement);
+    setupInputFields(forgotFormElement);
+
+    forgotFormElement.onsubmit = function(e) {
+        alert('Feature not yet implemented');
+    }
 
     // Signup form [ refactored ]
     if (signupFormElement) {
         const emailInput = signupFormElement.querySelector('input[type="email"]');
-        // const phoneInput = signupFormElement.querySelector('input[type="tel"]');
         const passwordInput = signupFormElement.querySelector('input[name="password"]');
         const confirmPassword = signupFormElement.querySelector('input[name="confirm_password"]');
         const policyCheckbox = document.getElementById('policy');
@@ -276,22 +292,6 @@ document.addEventListener('DOMContentLoaded', function() {
             validateForm();
         });
 
-        /* phoneInput.addEventListener('input', function() {
-            const phoneRegex = /^\d{10}$/;
-            const digitsOnly = this.value.replace(/\D/g, '');
-            
-            if (this.value.trim() === '') {
-                removeErrorMessage(this);
-                this.style.borderColor = '#ddd';
-            } else if (!phoneRegex.test(digitsOnly)) {
-                showErrorMessage(this, 'Please enter a valid 10-digit phone number');
-            } else {
-                removeErrorMessage(this);
-            }
-            
-            validateForm();
-        }); */
-
         let password;
         let password_confirm;
     
@@ -331,49 +331,17 @@ document.addEventListener('DOMContentLoaded', function() {
 
         function validateForm() {
             const emailValid = !emailInput.parentNode.querySelector('.error-message') && emailInput.value.trim() !== '';
-            // const phoneValid = !phoneInput.parentNode.querySelector('.error-message') && phoneInput.value.trim() !== '';
             const passwordValid = !passwordInput.parentNode.querySelector('.error-message') && passwordInput.value.trim() !== '';
             const passwordMatch = !confirmPassword.parentNode.querySelector('.error-message') && confirmPassword.value.trim() != '';
             const policyChecked = policyCheckbox.checked;
 
-            submitButton.disabled = !(emailValid /* phoneValid */ && passwordValid && passwordMatch && policyChecked);
+            submitButton.disabled = !(emailValid && passwordValid && passwordMatch && policyChecked);
             submitButton.style.opacity = submitButton.disabled ? '0.5' : '1';
             submitButton.style.cursor = submitButton.disabled ? 'not-allowed' : 'pointer';
         }
 
         policyCheckbox.addEventListener('change', validateForm);
-
-        /* signupFormElement.addEventListener('submit', function(e) {
-            e.preventDefault();
-        
-            const emailValid = !emailInput.parentNode.querySelector('.error-message') && emailInput.value.trim() !== '';
-            const phoneValid = !phoneInput.parentNode.querySelector('.error-message') && phoneInput.value.trim() !== '';
-            const passwordValid = !passwordInput.parentNode.querySelector('.error-message') && passwordInput.value.trim() !== '';
-            const policyChecked = policyCheckbox.checked;
-            
-            if (emailValid && phoneValid && passwordValid && policyChecked) {
-                alert('Signup successful! You can now add API code here to submit the form.');
-            } else {
-                alert('Please fill all fields correctly');
-            }
-        }); */
     }
-
-    /* if (loginFormElement) {
-        const emailInput = loginFormElement.querySelector('input[type="email"]');
-        const passwordInput = loginFormElement.querySelector('input[type="password"]');
-        const submitButton = loginFormElement.querySelector('button[type="submit"]');
-        
-        loginFormElement.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            if (emailInput.value.trim() !== '' && passwordInput.value.trim() !== '') {
-                alert('Login successful! Redirecting...');
-            } else {
-                alert('Please enter your email and password');
-            }
-        });
-    } */
 
     // Forgot password form
     const forgotForm = document.querySelector('.form-box.forgot');

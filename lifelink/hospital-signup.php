@@ -23,7 +23,7 @@ if(isset($_POST['hospital_signup'])) {
             $sql = "INSERT INTO hospital_login_info (email, password, is_active) 
             VALUES ('$email', '$hashed_password', 1)";
                             
-            if($conn->query($sql) === FALSE) {
+            if($conn->query($sql) === TRUE) {
                 $signup_success = "Account created successfully!";
             } else {
                 $signup_error = "Error creating account!";

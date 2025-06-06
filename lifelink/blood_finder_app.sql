@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 29, 2025 at 10:00 AM
+-- Generation Time: Jun 06, 2025 at 09:59 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -37,22 +37,6 @@ CREATE TABLE `blood_inventory` (
   `blood_bank_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `blood_inventory`
---
-
-INSERT INTO `blood_inventory` (`serial_no`, `blood_type`, `form_factor`, `source`, `date_recieved`, `expiration_date`, `blood_bank_id`) VALUES
-(18, 'A+', 'whole', 'donation', '2025-05-22 09:13:19', '2025-07-03 09:13:19', 2),
-(19, 'A-', 'rbc', 'donation', '2025-05-22 09:13:30', '2025-07-03 09:13:30', 2),
-(20, 'A-', 'rbc', 'donation', '2025-05-22 09:13:30', '2025-07-03 09:13:30', 2),
-(21, 'AB+', 'whole', 'blood bank', '2025-05-22 09:13:50', '2025-07-03 09:13:50', 2),
-(22, 'AB+', 'whole', 'blood bank', '2025-05-22 09:13:50', '2025-07-03 09:13:50', 2),
-(23, 'AB+', 'whole', 'blood bank', '2025-05-22 09:13:50', '2025-07-03 09:13:50', 2),
-(24, 'AB+', 'whole', 'blood bank', '2025-05-22 09:13:50', '2025-07-03 09:13:50', 2),
-(25, 'AB+', 'whole', 'blood bank', '2025-05-22 09:13:50', '2025-07-03 09:13:50', 2),
-(26, 'O-', 'rbc', 'donation', '2025-05-22 09:14:02', '2025-07-03 09:14:02', 2),
-(27, 'O-', 'rbc', 'donation', '2025-05-22 09:14:02', '2025-07-03 09:14:02', 2);
-
 -- --------------------------------------------------------
 
 --
@@ -61,23 +45,27 @@ INSERT INTO `blood_inventory` (`serial_no`, `blood_type`, `form_factor`, `source
 
 CREATE TABLE `blood_requests` (
   `request_id` int(11) NOT NULL,
-  `requested_donor` int(11) NOT NULL,
-  `name` varchar(50) NOT NULL,
-  `contact` varchar(11) NOT NULL,
+  `donor_id` int(11) NOT NULL,
+  `requester_name` varchar(50) NOT NULL,
+  `contact_email` varchar(50) NOT NULL,
+  `contact_no` varchar(11) NOT NULL,
   `request_description` varchar(500) NOT NULL,
   `urgent` tinyint(1) NOT NULL DEFAULT 0,
-  `healthcare_institution` enum('lorem','dummy hospital') NOT NULL,
-  `date_needed` date NOT NULL
+  `hospital_id` int(11) DEFAULT NULL,
+  `point_of_donation` varchar(100) NOT NULL,
+  `date_needed` date NOT NULL,
+  `status` enum('Pending','Accepted','Expired','Done','Cancelled') NOT NULL DEFAULT 'Pending'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `blood_requests`
 --
 
-INSERT INTO `blood_requests` (`request_id`, `requested_donor`, `name`, `contact`, `request_description`, `urgent`, `healthcare_institution`, `date_needed`) VALUES
-(6, 2, 'Allen', '09xxxxxxxxx', 'Anemia', 0, 'dummy hospital', '2025-05-15'),
-(9, 2, ' tes12423', '23423', 'HELP', 1, 'dummy hospital', '2025-05-31'),
-(10, 2, ' asd', 'asd', 'asd', 1, 'dummy hospital', '2025-12-30');
+INSERT INTO `blood_requests` (`request_id`, `donor_id`, `requester_name`, `contact_email`, `contact_no`, `request_description`, `urgent`, `hospital_id`, `point_of_donation`, `date_needed`, `status`) VALUES
+(32, 15, ' Mark', 'johnichiro.mananquil.photos2@gmail.com', '09xxxxxxxxx', 'Mark as done test', 0, NULL, 'Naic Doctors Hospital', '2025-06-13', 'Pending'),
+(34, 16, ' Test Request Email', 'johnichiro.mananquil.photos2@gmail.com', '09xxxxxxxxx', 'Test Request Email', 0, NULL, 'Naic Doctors Hospital', '2025-06-20', 'Pending'),
+(36, 16, ' Test 2', 'johnichiro.mananquil.photos2@gmail.com', '09xxxxxxxxx', 'TEST 123456789', 0, NULL, 'Naic Doctors Hospital', '2025-06-21', 'Pending'),
+(38, 16, ' TEST REQ', 'johnichiro.mananquil.photos2@gmail.com', '09xxxxxxxxx', 'TEST', 1, NULL, 'Tanza Doctors Hospital', '2025-06-11', 'Pending');
 
 -- --------------------------------------------------------
 
@@ -100,11 +88,7 @@ CREATE TABLE `donation_appointments` (
 --
 
 INSERT INTO `donation_appointments` (`donation_id`, `donor_id`, `date_of_donation`, `preferred_time`, `hospital_id`, `additional_info`, `status`) VALUES
-(12, 2, '2025-05-27', 'Evening', 2, 'None to report', 'Approved'),
-(14, 3, '2025-05-31', 'Morning', 3, 'Test.', 'Pending'),
-(15, 4, '2025-05-29', 'Afternoon', 2, 'Test 123.', 'Approved'),
-(16, 2, '2025-05-29', 'Morning', 2, '123', 'Approved'),
-(17, 4, '2025-05-30', 'Morning', 2, 'Test', 'Approved');
+(24, 14, '2025-06-03', 'Evening', 4, 'Test', 'Completed');
 
 -- --------------------------------------------------------
 
@@ -114,26 +98,22 @@ INSERT INTO `donation_appointments` (`donation_id`, `donor_id`, `date_of_donatio
 
 CREATE TABLE `donation_history` (
   `history_id` int(11) NOT NULL,
-  `donation_id` int(11) NOT NULL,
+  `request_id` int(11) DEFAULT NULL,
+  `donation_id` int(11) DEFAULT NULL,
   `donor_id` int(11) NOT NULL,
-  `hospital_id` int(11) NOT NULL,
-  `date_completed` date NOT NULL DEFAULT current_timestamp()
+  `hospital_id` int(11) DEFAULT NULL,
+  `extraction_datetime` datetime NOT NULL,
+  `component` enum('Whole Blood','Red Blood Cells','Platelets','Plasma') DEFAULT NULL,
+  `units_collected` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `donation_history`
 --
 
-INSERT INTO `donation_history` (`history_id`, `donation_id`, `donor_id`, `hospital_id`, `date_completed`) VALUES
-(1, 15, 4, 2, '2025-05-29'),
-(2, 17, 4, 2, '2025-05-29'),
-(3, 16, 2, 2, '2025-05-29'),
-(4, 15, 4, 2, '2025-05-29'),
-(5, 15, 4, 2, '2025-05-29'),
-(6, 12, 2, 2, '2025-05-29'),
-(7, 16, 2, 2, '2025-05-29'),
-(8, 15, 4, 2, '2025-05-29'),
-(9, 17, 4, 2, '2025-05-29');
+INSERT INTO `donation_history` (`history_id`, `request_id`, `donation_id`, `donor_id`, `hospital_id`, `extraction_datetime`, `component`, `units_collected`) VALUES
+(34, NULL, 24, 14, 4, '2025-06-03 18:07:52', 'Whole Blood', 1),
+(40, 32, NULL, 15, NULL, '2025-06-13 00:00:00', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -143,10 +123,9 @@ INSERT INTO `donation_history` (`history_id`, `donation_id`, `donor_id`, `hospit
 
 CREATE TABLE `donor_info` (
   `donor_id` int(11) NOT NULL,
-  `name` varchar(50) NOT NULL,
+  `donor_name` varchar(50) NOT NULL,
   `blood_type` enum('A+','A-','B+','B-','AB+','AB-','O+','O-') NOT NULL,
   `address` varchar(100) NOT NULL,
-  `last_donation` varchar(50) DEFAULT 'No Record',
   `contact` varchar(11) NOT NULL,
   `donor_notes` varchar(500) NOT NULL,
   `available` tinyint(1) NOT NULL DEFAULT 1,
@@ -157,11 +136,10 @@ CREATE TABLE `donor_info` (
 -- Dumping data for table `donor_info`
 --
 
-INSERT INTO `donor_info` (`donor_id`, `name`, `blood_type`, `address`, `last_donation`, `contact`, `donor_notes`, `available`, `next_available`) VALUES
-(2, 'John Ichiro Mananquil', 'A+', 'Naic, Cavite', 'No Record', '09951091995', '', 1, '2025-05-29'),
-(3, 'dummy donor', 'A-', 'Tanza, Cavite', 'No Record', '12345678901', '', 1, '2025-05-29'),
-(4, 'Dummy Donor 2', 'B-', 'Ternate, Cavite', 'No Record', '12345098765', '', 1, '2025-05-29'),
-(9, 'Test Info', 'O+', 'Trece Martires City, Cavite', 'No Record', '09277348393', '', 1, '2025-05-29');
+INSERT INTO `donor_info` (`donor_id`, `donor_name`, `blood_type`, `address`, `contact`, `donor_notes`, `available`, `next_available`) VALUES
+(14, 'Finalizing', 'A+', 'Silang, Cavite', '09112223333', '', 0, '2025-07-15'),
+(15, 'Finalizing 2', 'O+', 'Ternate, Cavite', '09xxxxxxxxx', '', 0, '2025-07-26'),
+(16, 'Ichoooi', 'AB+', 'Trece Martires City, Cavite', '09xxxxxxxxx', 'Eczema', 1, '2025-06-06');
 
 -- --------------------------------------------------------
 
@@ -183,11 +161,9 @@ CREATE TABLE `donor_login_info` (
 --
 
 INSERT INTO `donor_login_info` (`id`, `email`, `password`, `last_login`, `is_active`, `date_created`) VALUES
-(2, 'dummy-email@gmail.com', '$2y$10$EK0gSQ5golcpx0IMSzcu4u2BEdPSkCYeBv2bLNzecTbGjz1VuBn3C', '2025-05-28', 1, '2025-05-02'),
-(3, 'dummy-email2@gmail.com', '$2y$10$tEsmnGx81i4HN9Ie/EOHF.ovuedGpLR0RXI66WcsoSVI0KBPBgTJ2', '2025-05-27', 1, '2025-05-07'),
-(4, 'dummy-email3@gmail.com', '$2y$10$wofa6uLtnv2pHqYQAqWOHulwp.6MCMeZE1.LF6Tf21Gpm8ohYcGKS', '2025-05-29', 1, '2025-05-08'),
-(9, 'dummy-email4@gmail.com', '$2y$10$XgPaUMK5YQ2GqejOawIfne09FLhADz7kP1tA7PCOIu5m2QT0/d2We', '2025-05-28', 1, '2025-05-20'),
-(10, 'dummy-email5@gmail.com', '$2y$10$88iftKjxPjFlj7tgDp5TBORXUsJ3TbXq5DcQ5DNcnRzljXRuYJeva', '2025-05-29', 1, '2025-05-20');
+(14, 'yukinoo0713@gmail.com', '$2y$10$rn0OpJtiQHJMSvAyOOVm1eTkopBERWa4WM5dMIybWFz6hNVbCn4sW', '2025-06-06', 1, '2025-06-03'),
+(15, 'johnichiro.mananquil.photos@gmail.com', '$2y$10$..ct3k.KyKwObTC/LWsLWuujTOH/bxQ5XXapvKig0xlAqr8gVtgUW', NULL, 1, '2025-06-06'),
+(16, 'ichiljay@gmail.com', '$2y$10$9qY6KT3K1D.MKVfoiEJg6OmMOZ2.it43Da2rNzzNXouj5DEzdgF6G', '2025-06-06', 1, '2025-06-06');
 
 -- --------------------------------------------------------
 
@@ -207,8 +183,7 @@ CREATE TABLE `hospital_info` (
 --
 
 INSERT INTO `hospital_info` (`id`, `name`, `address`, `contact`) VALUES
-(2, 'Dummy Blood Bank', 'Silang, Cavite', '01-2345-6789'),
-(3, 'dummy hospital 2', 'Dasmarinas, Cavite', '12-3456-7890');
+(4, 'Hospital Test Mail', 'Naic, Cavite', '12-3456-7890');
 
 -- --------------------------------------------------------
 
@@ -230,8 +205,7 @@ CREATE TABLE `hospital_login_info` (
 --
 
 INSERT INTO `hospital_login_info` (`id`, `email`, `password`, `last_login`, `is_active`, `date_created`) VALUES
-(2, 'hospital-dummy@gmail.com', '$2y$10$P2.No2eI/nsewQslt9yreOo/JglWvwC7xo5hi4C8ktcgOicu4GS3u', NULL, 1, '2025-05-07'),
-(3, 'hospital-dummy0@gmail.com', '$2y$10$AxwISO/g9dK9v16BfHcCAeSiMux1dnMCHP.xQUjIeO7q5Z8tIVX2e', NULL, 1, '2025-05-27');
+(4, 'aonoyuki17@gmail.com', '$2y$10$FFodxslNXbNwmeSlvEwObe6OdG71sIriMBKc4RbGp2VWbCZSajfoK', NULL, 1, '2025-06-03');
 
 --
 -- Indexes for dumped tables
@@ -249,7 +223,8 @@ ALTER TABLE `blood_inventory`
 --
 ALTER TABLE `blood_requests`
   ADD PRIMARY KEY (`request_id`),
-  ADD KEY `requested_donor` (`requested_donor`);
+  ADD KEY `requested_donor` (`donor_id`),
+  ADD KEY `hospital_id` (`hospital_id`);
 
 --
 -- Indexes for table `donation_appointments`
@@ -309,31 +284,31 @@ ALTER TABLE `blood_inventory`
 -- AUTO_INCREMENT for table `blood_requests`
 --
 ALTER TABLE `blood_requests`
-  MODIFY `request_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `request_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=39;
 
 --
 -- AUTO_INCREMENT for table `donation_appointments`
 --
 ALTER TABLE `donation_appointments`
-  MODIFY `donation_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
+  MODIFY `donation_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `donation_history`
 --
 ALTER TABLE `donation_history`
-  MODIFY `history_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `history_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=43;
 
 --
 -- AUTO_INCREMENT for table `donor_login_info`
 --
 ALTER TABLE `donor_login_info`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `hospital_login_info`
 --
 ALTER TABLE `hospital_login_info`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables
@@ -343,13 +318,14 @@ ALTER TABLE `hospital_login_info`
 -- Constraints for table `blood_inventory`
 --
 ALTER TABLE `blood_inventory`
-  ADD CONSTRAINT `blood_inventory_ibfk_1` FOREIGN KEY (`blood_bank_id`) REFERENCES `hospital_login_info` (`id`);
+  ADD CONSTRAINT `blood_inventory_ibfk_1` FOREIGN KEY (`blood_bank_id`) REFERENCES `hospital_login_info` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Constraints for table `blood_requests`
 --
 ALTER TABLE `blood_requests`
-  ADD CONSTRAINT `blood_requests_ibfk_1` FOREIGN KEY (`requested_donor`) REFERENCES `donor_login_info` (`id`);
+  ADD CONSTRAINT `blood_requests_ibfk_1` FOREIGN KEY (`donor_id`) REFERENCES `donor_login_info` (`id`),
+  ADD CONSTRAINT `blood_requests_ibfk_2` FOREIGN KEY (`hospital_id`) REFERENCES `hospital_info` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Constraints for table `donation_appointments`
@@ -363,8 +339,8 @@ ALTER TABLE `donation_appointments`
 --
 ALTER TABLE `donation_history`
   ADD CONSTRAINT `donation_history_ibfk_1` FOREIGN KEY (`donor_id`) REFERENCES `donor_info` (`donor_id`),
-  ADD CONSTRAINT `donation_history_ibfk_2` FOREIGN KEY (`hospital_id`) REFERENCES `hospital_info` (`id`),
-  ADD CONSTRAINT `donation_history_ibfk_3` FOREIGN KEY (`donation_id`) REFERENCES `donation_appointments` (`donation_id`);
+  ADD CONSTRAINT `donation_history_ibfk_2` FOREIGN KEY (`hospital_id`) REFERENCES `hospital_info` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  ADD CONSTRAINT `donation_history_ibfk_3` FOREIGN KEY (`donation_id`) REFERENCES `donation_appointments` (`donation_id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 --
 -- Constraints for table `donor_info`
@@ -376,7 +352,7 @@ ALTER TABLE `donor_info`
 -- Constraints for table `hospital_info`
 --
 ALTER TABLE `hospital_info`
-  ADD CONSTRAINT `hospital_info_ibfk_1` FOREIGN KEY (`id`) REFERENCES `hospital_login_info` (`id`);
+  ADD CONSTRAINT `hospital_info_ibfk_1` FOREIGN KEY (`id`) REFERENCES `hospital_login_info` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -39,6 +39,9 @@ else {
 // Get appointments
 getDonationAppointments($sess_id);
 
+// Get history
+getHospitalDBDonationHistory($sess_id);
+
 // Update contact information
 if(isset($_POST['update_info'])) {
     $sql = "UPDATE hospital_info SET contact='$_POST[tel]'";
@@ -289,10 +292,10 @@ if(isset($_POST['update_password'])) {
                 <div class="appointment-filters">
                     <select id="appointment-status">
                         <option value="all">All Appointments</option>
-                        <option value="pending">Pending</option>
-                        <option value="approved">Approved</option>
-                        <option value="completed">Completed</option>
-                        <option value="rejected">Rejected</option>
+                        <option value="Pending">Pending</option>
+                        <option value="Approved">Approved</option>
+                        <option value="Completed">Completed</option>
+                        <option value="Rejected">Rejected</option>
                     </select>
                     <select id="appointment-blood-type">
                         <option value="all">All Blood Types</option>
@@ -334,9 +337,9 @@ if(isset($_POST['update_password'])) {
             <tr>
                 <th><i class="fas fa-user"></i> Donor Name</th>
                 <th><i class="fas fa-tint"></i> Blood Type</th>
-                <th><i class="fas fa-calendar"></i> Donation Date</th>
+                <th><i class="fas fa-calendar"></i> Date/Time of Extraction</th>
+                <th><i class="fas fa-info-circle"></i> Component Extracted</th>
                 <th><i class="fas fa-vial"></i> Units Collected</th>
-                <th><i class="fas fa-info-circle"></i> Status</th>
             </tr>
         </thead>
         <tbody>
@@ -422,30 +425,32 @@ if(isset($_POST['update_password'])) {
         </div>
     </div>
 
-    <div class="modal" id="completionForm">
+    <div class="modal" id="confirmModal"></div>
+
+<!--<div class="modal" id="completionForm">
         <div class="modal-content">
             <span class="close-modal">&times;</span>
             <h2>Completion Form</h2>
+            <div class="completion-form">
+                <form>
+                    Date of completion:
+                    <br><input type="date"><br>
+                    Time of extraction:
+                    <br><input type="time"><br>
+                    Units Extracted:
+                    <br><input type="num"><br>
+                    Blood Form Factor:
+                    <br>
+                    <select>
+                        <option value="">Whole Blood</option>
+                    </select>
+            </div>
+            <div class="modal-actions">
+                <button type="submit">Confirm</button>
+                </form>
+            </div>
         </div>
-        <div class="completion-form">
-            <form>
-                Date of completion:
-                <br><input type="date"><br>
-                Time of extraction:
-                <br><input type="time"><br>
-                Units Extracted:
-                <br><input type="num"><br>
-                Blood Form Factor:
-                <br>
-                <select>
-                    <option value="">Whole Blood</option>
-                </select>
-        </div>
-        <div class="modal-actions">
-            <button type="submit">Confirm</button>
-            </form>
-        </div>
-    </div>
+    </div>-->
 
     <script src="hospital-db.js"></script>
 </body>

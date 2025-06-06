@@ -67,7 +67,7 @@ if(isset($_POST['hospital_login'])) {
             Password: <br><input type="password" name="password" required><br>
             <button type="submit" name="hospital_login">Login</button>
         </form>
-        <a href="signup.php">Sign Up</a><br>
+        <a href="hospital-signup.php">Sign Up</a><br>
         <a href="donor-login.php">Log in as donor</a>
     </div>
     <script>

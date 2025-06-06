@@ -2,6 +2,9 @@
 include '_functions.php';
 $conn = connect();
 
+date_default_timezone_set("Asia/Manila");
+$today = date("Y-m-d");
+
 $current_session = $_SESSION['donor_email'];
 
 if(!isset($current_session)) {
@@ -16,38 +19,57 @@ while($row = $get_sess_id->fetch_assoc()) {
 }
 
 updateAvailablity();
+updateRequests();
 
+// get user info
 $userinfo = getSessionInfo($sess_id);
-$name = $userinfo[0]['name'];
-$contact = $userinfo[0]['contact'];
-$location = $userinfo[0]['address'];
-$blood_type = $userinfo[0]['blood_type'];
-$donor_notes = $userinfo[0]['donor_notes'];
-$last_donation = $userinfo[0]['last_donation'];
-$next_available = $userinfo[0]['next_available'];
-
-
+    $name = $userinfo[0]['donor_name'];
+    $contact = $userinfo[0]['contact'];
+    $location = $userinfo[0]['address'];
+    $blood_type = $userinfo[0]['blood_type'];
+    $donor_notes = $userinfo[0]['donor_notes'];
+    $available = $userinfo[0]['available'];
+    $next_available = $userinfo[0]['next_available'];
+    $next = date_create($next_available);
+    $next_available_FjY = date_format($next, "F j, Y");
 
 // get recent appointment details
 $appt_details = getRecentAppointmentDetails($sess_id);
-$appt_loc = $appt_details[0]['name'];
-$appt_cont = $appt_details[0]['contact'];
-$appt_date = $appt_details[0]['date_of_donation'];
-$appt_time = $appt_details[0]['preferred_time'];
-$appt_status = $appt_details[0]['status'];
+if(isset($appt_details)) {
+    $appt_id = $appt_details[0]['donation_id'];
+    $appt_loc = $appt_details[0]['name'];
+    $appt_cont = $appt_details[0]['contact'];
+    $appt_date = $appt_details[0]['date_of_donation'];
+    $date = date_create($appt_date);
+    $appt_date_FjY = date_format($date, "F j, Y");
+    $appt_time = $appt_details[0]['preferred_time'];
+    $appt_status = $appt_details[0]['status'];
+}
 
 // get last donation history
-$sql = "SELECT date_completed FROM donation_history WHERE donor_id='$sess_id' ORDER BY history_id DESC LIMIT 1";
+$sql = "SELECT extraction_datetime FROM donation_history WHERE donor_id='$sess_id' ORDER BY history_id DESC LIMIT 1";
 $query = $conn->query($sql);
 $data = $query->fetch_assoc();
-$completion_date = $data['date_completed'];
 
-$new_date = date_create($completion_date);
-$date = date_format($new_date, "F j, Y");
+// get recent donation in history
+$last_donation = "No Record";
+$recent_donation = getRecentDonation($sess_id);
+if (isset($recent_donation)) {
+    // Check if recent donation is from a request or an appointment
+    if ($recent_donation[0]['request_id'] === null) { // from appointment
+        $date = date_create($recent_donation[0]['extraction_datetime']);
+        $date_format = date_format($date, "F j, Y - h:i:s A");
+        $last_donation = $date_format . " at " . $appt_loc;
+    } else if ($recent_donation[0]['donation_id'] === null) { // from request
+        $date = date_create($recent_donation[0]['extraction_datetime']);
+        $date_format = date_format($date, "F j, Y");
+        $last_donation = $date_format . " at " . $recent_donation[0]['point_of_donation'];
+    }
+}
 
 if (isset($_POST['update'])) { // update information function
     $sql = "UPDATE `donor_info` SET
-    `name`='$_POST[name]',
+    `donor_name`='$_POST[name]',
     `contact`='$_POST[contact]',
     `address`='$_POST[address]',
     `donor_notes`='$_POST[donor_notes]'
@@ -88,14 +110,26 @@ if(isset($_POST['donation_appointment'])) { // donation appointment function
     
     <!-- Top Navigation -->
     <header class="header">
-        <a href="home.php" class="logo">
+        <a href="#" class="logo">
             <i class="fas fa-heartbeat"></i>
             <span>LifeLink</span>
         </a>
         <div class="nav-links">
-            <a href="home.php">Home</a>
-            <a href="#">Donors</a>
-            <a href="#">Blood Banks</a>
+            <a href="donors.php">Donors</a>
+            <a href="bloodbanks.php">Blood Banks</a>
+        </div>
+        <div class="ham-menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="off-screen-menu">
+            <ul>
+                <li>Home</li>
+                <li id="logoutBtn">Logout</li>
+                <li>About Us</li>
+                <li>Contact</li>
+            </ul>
         </div>
     </header>
     
@@ -153,19 +187,13 @@ if(isset($_POST['donation_appointment'])) { // donation appointment function
                             <i class="fas fa-tint" style="font-size: 2.5rem; color: var(--primary); margin-bottom: 0.8rem;"></i>
                             <h3>Your Last Donation</h3>
                             <p>
-                            <?php // add distance
-                            if($last_donation != "No Record") {
-                                echo $last_donation . " at _____";
-                            }
-                            else
-                                echo $last_donation;
-                            ?>
+                                <?php echo $last_donation?>
                             </p>
                             <p style="margin-top: 0.8rem;">
                                 <strong>Next eligible donation:</strong>
-                                <?php
-                                echo $next_available;
-                                ?>
+                                    <?php
+                                    echo $next_available_FjY;
+                                    ?>
                             </p>
                             <button class="btn btn-primary" style="margin-top: 0.8rem;" data-page="donate">Schedule Next Donation</button>
                         </div>
@@ -174,7 +202,7 @@ if(isset($_POST['donation_appointment'])) { // donation appointment function
                     <!-- Urgent Requests Card -->
                     <section class="card">
                         <div class="card-header">
-                            <h2>Urgent Requests Near You</h2>
+                            <h2>Latest Pending Urgent Requests</h2>
                             <i class="fas fa-exclamation-triangle" style="color: var(--primary-dark); font-size: 1.3rem;"></i>
                         </div>
                         <ul class="request-list" style="height: 378px;"><?php getUrgentRequests($sess_id); ?></ul>
@@ -192,30 +220,59 @@ if(isset($_POST['donation_appointment'])) { // donation appointment function
                     <p>Find a convenient time and location to donate blood across the Philippines.</p>
                 </div>
 
-                <div class="dashboard">
+                <div class="dashboard" style="width: 700px;">
                     <div class="donation-form-container">
                         <section class="card donation-form-card">
                             <div class="card-header">
                                 <h2>Donation Appointment</h2>
                                 <i class="fas fa-tint" style="color: var(--primary); font-size: 1.5rem;"></i>
                             </div>
-                            <div class="donation-status" style="margin: 1rem;">
+                            <div class="donation-status" style="text-align:center; margin: 1rem;">
                                 
                                 <?php
-                                if($appt_status === 'Pending' || $appt_status === 'Approved') {
-                                    echo "
-                                    <div class='status-badge status-pending' style='text-align: center;'>
-                                        <i class='fas fa-clock'></i> Ongoing Appointment
-                                        
-                                        <button class='btn btn-outline btn-sm view-appointment-details'>View Details</button>
-                                    </div>  
-                                    ";
+                                if (isset($appt_details)) {
+                                    if ($appt_status === 'Pending' || $appt_status === 'Approved') {
+                                        echo "
+                                            <div class='status-badge status-pending'>
+                                                <i class='fas fa-clock'></i> Ongoing Appointment
+                                                <button class='btn btn-outline btn-sm view-appointment-details'>View Details</button>
+                                            </div>  
+                                        ";
+                                    } else if ($appt_status === 'Cancelled' && $appt_date >= $today) {
+                                        echo "
+                                        <div class='status-badge status-cancelled'>
+                                            <i class='fas fa-clock'></i>
+                                            Previous Appointment on " . $appt_date . " was cancelled.
+                                        </div>
+                                        ";
+                                    }
+                                }
+                                
+                                if (isset($recent_donation)) {
+                                    if ($next_available >= $today && $available == 0) {
+                                        echo "
+                                        <div class='status-badge status-completed'>
+                                            <i class='fas fa-clock'></i>
+                                            Next Available: " . $next_available_FjY . "
+                                        </div>
+                                        ";
+                                    }
                                 }
                                 ?>
 
                             </div>
                             <form id="donationForm" method="POST">
-                                <fieldset <?php if($appt_status === 'Pending' || $appt_status === 'Approved') {echo 'disabled';}?>>
+                                <?php
+                                if (isset($appt_details)) {
+                                    $form_disabled = false;
+                                    if ($appt_status === 'Pending' || $appt_status === 'Approved' || $next_available > $today) {
+                                        $form_disabled = true;
+                                    }
+                                } else if ($last_donation != 'No Record') {
+                                    $form_disabled = true;
+                                }
+                                ?>
+                                <fieldset <?php if (isset($form_disabled)) {if ($form_disabled === true) {echo "disabled";}} ?>>
                                     <div class="form-group">
                                         <label for="donationDate">Preferred Donation Date</label>
                                         <input type="date" id="donationDate" class="form-control" name="date_of_donation" required>
@@ -223,16 +280,16 @@ if(isset($_POST['donation_appointment'])) { // donation appointment function
                                     <div class="form-group">
                                         <label for="donationTime">Preferred Time</label>
                                         <select id="donationTime" class="form-control" name="preferred_time" required>
-                                            <option value="">Select a time</option>
-                                            <option value="morning">Morning (8am-12pm)</option>
-                                            <option value="afternoon">Afternoon (12pm-4pm)</option>
-                                            <option value="evening">Evening (4pm-8pm)</option>
+                                            <option value="" selected disabled style="display: none;">Select a time</option>
+                                            <option value="morning">Morning (8 AM - 12 PM)</option>
+                                            <option value="afternoon">Afternoon (12 PM - 4 PM)</option>
+                                            <option value="evening">Evening (4 PM - 8 PM)</option>
                                         </select>
                                     </div>
                                     <div class="form-group">
                                         <label for="donationCenter">Donation Center</label>
                                         <select id="donationCenter" class="form-control" name="hospital_id" required>
-                                            <option value="">Select a center</option>
+                                            <option value="" selected disabled style="display: none;">Select a center</option>
                                             <?php
                                             getHospitalList();
                                             ?>
@@ -260,12 +317,12 @@ if(isset($_POST['donation_appointment'])) { // donation appointment function
                     <p>View current blood requests across the Philippines and help those in need.</p>
                 </div>
 
-                <div class="dashboard">
+                <div class="dashboard" style="width: 700px">
                     <section class="card" style="grid-column: 1 / -1;">
                         <div class="card-header">
                             <h2>Current Blood Requests</h2>
                             <div class="filter-container">
-                                <div class="filter-group">
+                            <!--<div class="filter-group">
                                     <span class="filter-label">Distance:</span>
                                     <select id="filterDistance" class="form-control">
                                         <option value="">Any Distance</option>
@@ -273,7 +330,7 @@ if(isset($_POST['donation_appointment'])) { // donation appointment function
                                         <option value="10">Within 10 km</option>
                                         <option value="20">Within 20 km</option>
                                     </select>
-                                </div>
+                                </div>-->
                                 <div class="filter-group">
                                     <span class="filter-label">Urgency:</span>
                                     <select id="filterUrgency" class="form-control">
@@ -349,56 +406,8 @@ if(isset($_POST['donation_appointment'])) { // donation appointment function
                         <h2>Donation History</h2>
                         <i class="fas fa-history" style="color: var(--primary); font-size: 1.3rem;"></i>
                     </div>
-                    <ul class="request-list" style="max-height: 465px; overflow-y: auto;">
+                    <ul class="request-list" style="height: 680.61px; max-height: 680.61px; overflow-y: auto;">
                         <?php getDonorDBDonationHistory($sess_id); ?>
-                        <li class="request-item">
-                            <div class="request-info">
-                                <h3>March 15, 2023</h3>
-                                <p><i class="fas fa-map-marker-alt"></i> Philippine Red Cross - Manila</p>
-                                <p><i class="fas fa-tint"></i> A+ Blood Type</p>
-                                <p><i class="fas fa-heartbeat"></i> Surgery: Cardiac Bypass</p>
-                                <p><i class="fas fa-check-circle"></i> Successful Donation</p>
-                            </div>
-                            <div class="request-actions">
-                                <button class="btn btn-outline btn-sm view-details">Details</button>
-                            </div>
-                        </li>
-                        <li class="request-item">
-                            <div class="request-info">
-                                <h3>January 10, 2023</h3>
-                                <p><i class="fas fa-map-marker-alt"></i> Philippine General Hospital</p>
-                                <p><i class="fas fa-tint"></i> B- Blood Type</p>
-                                <p><i class="fas fa-brain"></i> Surgery: Neurosurgery</p>
-                                <p><i class="fas fa-check-circle"></i> Successful Donation</p>
-                            </div>
-                            <div class="request-actions">
-                                <button class="btn btn-outline btn-sm view-details">Details</button>
-                            </div>
-                        </li>
-                        <li class="request-item">
-                            <div class="request-info">
-                                <h3>November 5, 2022</h3>
-                                <p><i class="fas fa-map-marker-alt"></i> St. Luke's Medical Center</p>
-                                <p><i class="fas fa-tint"></i> O+ Blood Type</p>
-                                <p><i class="fas fa-bone"></i> Surgery: Orthopedic Procedure</p>
-                                <p><i class="fas fa-check-circle"></i> Successful Donation</p>
-                            </div>
-                            <div class="request-actions">
-                                <button class="btn btn-outline btn-sm view-details">Details</button>
-                            </div>
-                        </li>
-                        <li class="request-item">
-                            <div class="request-info">
-                                <h3>August 20, 2022</h3>
-                                <p><i class="fas fa-map-marker-alt"></i> Makati Medical Center</p>
-                                <p><i class="fas fa-tint"></i> AB+ Blood Type</p>
-                                <p><i class="fas fa-baby"></i> Surgery: Emergency C-Section</p>
-                                <p><i class="fas fa-check-circle"></i> Successful Donation</p>
-                            </div>
-                            <div class="request-actions">
-                                <button class="btn btn-outline btn-sm view-details">Details</button>
-                            </div>
-                        </li>
                     </ul>
                     <button class="btn btn-outline" style="margin-top: 0.8rem; width: 100%;" id="viewFullHistory">
                         View Full History
@@ -413,25 +422,26 @@ if(isset($_POST['donation_appointment'])) { // donation appointment function
     <!-- Donation Details Modal -->
     <div class="modal" id="appointmentDetailsModal">
         <div class="modal-content">
+                            <!-- Set condition -->
             <span class="close-modal">&times;</span>
             <h2>Appointment Details</h2>
             <div class="appointment-details">
                 <p><strong>Status:</strong> <span id="appointmentStatus"><?php echo $appt_status?></span></p>
-                <p><strong>Date:</strong> <span id="appointmentDate"><?php echo $appt_date?></span></p>
+                <p><strong>Date:</strong> <span id="appointmentDate"><?php echo $appt_date_FjY?></span></p>
                 <p><strong>Time:</strong> <span id="appointmentTime"><?php echo $appt_time?></span></p>
                 <p><strong>Location:</strong> <span id="appointmentLocation"><?php echo $appt_loc?></span></p>
-            <!--<p><strong>Blood Type:</strong> <span id="appointmentBloodType">Not specified</span></p>
-                <p><strong>Notes:</strong> <span id="appointmentNotes">No additional notes provided.</span></p>-->
             </div>
             <div class="modal-actions" style="margin-top: 1.2rem;">
-        <!--<button class="btn btn-primary" id="editAppointment">Edit Appointment</button>-->
-            <button class="btn btn-outline" style="margin-left: 0.5rem;" id="cancelAppointment">Cancel Appointment</button>
+            <form action="_appointments.php" method="GET">
+                <input type="number" name="donation_id" value="<?php echo $appt_id;?>" style="display: none;">
+                <button type="submit" class="btn btn-outline" style="margin-left: 0.5rem;" id="cancelAppointment" name="cancel" value="true">Cancel Appointment</button>
+            </form>
             </div>
         </div>
     </div>
 
     <!-- Request Details Modal -->
-    <div class="modal" id="requestModal">
+<!--<div class="modal" id="requestModal">
         <div class="modal-content">
             <span class="close-modal">&times;</span>
             <h2>Request Details</h2>
@@ -451,7 +461,7 @@ if(isset($_POST['donation_appointment'])) { // donation appointment function
                 <button class="btn btn-outline" style="margin-left: 0.5rem;" id="saveForLater">Save for Later</button>
             </div>
         </div>
-    </div>
+    </div>-->
 
     <!-- Full History Modal -->
     <div class="modal" id="fullHistoryModal">
@@ -579,3 +589,54 @@ if(isset($_POST['donation_appointment'])) { // donation appointment function
     <script src="donor-db.js"></script>
 </body>
 </html>
+
+<!--
+                        <li class="request-item">
+                            <div class="request-info">
+                                <h3>March 15, 2023</h3>
+                                <p><i class="fas fa-map-marker-alt"></i> Philippine Red Cross - Manila</p>
+                                <p><i class="fas fa-tint"></i> A+ Blood Type</p>
+                                <p><i class="fas fa-heartbeat"></i> Surgery: Cardiac Bypass</p>
+                                <p><i class="fas fa-check-circle"></i> Successful Donation</p>
+                            </div>
+                            <div class="request-actions">
+                                <button class="btn btn-outline btn-sm view-details">Details</button>
+                            </div>
+                        </li>
+                        <li class="request-item">
+                            <div class="request-info">
+                                <h3>January 10, 2023</h3>
+                                <p><i class="fas fa-map-marker-alt"></i> Philippine General Hospital</p>
+                                <p><i class="fas fa-tint"></i> B- Blood Type</p>
+                                <p><i class="fas fa-brain"></i> Surgery: Neurosurgery</p>
+                                <p><i class="fas fa-check-circle"></i> Successful Donation</p>
+                            </div>
+                            <div class="request-actions">
+                                <button class="btn btn-outline btn-sm view-details">Details</button>
+                            </div>
+                        </li>
+                        <li class="request-item">
+                            <div class="request-info">
+                                <h3>November 5, 2022</h3>
+                                <p><i class="fas fa-map-marker-alt"></i> St. Luke's Medical Center</p>
+                                <p><i class="fas fa-tint"></i> O+ Blood Type</p>
+                                <p><i class="fas fa-bone"></i> Surgery: Orthopedic Procedure</p>
+                                <p><i class="fas fa-check-circle"></i> Successful Donation</p>
+                            </div>
+                            <div class="request-actions">
+                                <button class="btn btn-outline btn-sm view-details">Details</button>
+                            </div>
+                        </li>
+                        <li class="request-item">
+                            <div class="request-info">
+                                <h3>August 20, 2022</h3>
+                                <p><i class="fas fa-map-marker-alt"></i> Makati Medical Center</p>
+                                <p><i class="fas fa-tint"></i> AB+ Blood Type</p>
+                                <p><i class="fas fa-baby"></i> Surgery: Emergency C-Section</p>
+                                <p><i class="fas fa-check-circle"></i> Successful Donation</p>
+                            </div>
+                            <div class="request-actions">
+                                <button class="btn btn-outline btn-sm view-details">Details</button>
+                            </div>
+                        </li>
+-->

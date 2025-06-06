@@ -1,4 +1,81 @@
 document.addEventListener('DOMContentLoaded', function() {
+
+    // Check if logged in AJAX request
+function checkLogin() {
+    const xhttp = new XMLHttpRequest();
+    xhttp.onreadystatechange = function() {
+        if(this.readyState == 4 && this.status == 200) {
+            if(this.responseText.trim() === 'loggedIn') {
+                window.location.href = "donor-db.php";
+            }
+            else {
+                showLoginForm();
+                showPopup();
+            }
+        }    
+    };
+    xhttp.open("GET", "_check-login.php", true);
+    xhttp.send();
+}
+
+// Burger JS
+const hamMenu = document.querySelector('.ham-menu');
+const offScreenMenu = document.querySelector('.off-screen-menu');
+const body = document.body;
+
+// Close burger
+if (hamMenu && offScreenMenu) {
+    hamMenu.addEventListener('click', function() {
+        hamMenu.classList.toggle('active');
+        offScreenMenu.classList.toggle('active');
+        // body.classList.toggle('menu-open');
+    });
+
+    document.addEventListener('click', function(e) {
+        if (!hamMenu.contains(e.target) && !offScreenMenu.contains(e.target) && offScreenMenu.classList.contains('active')) {
+            hamMenu.classList.remove('active');
+            offScreenMenu.classList.remove('active');
+        }
+    });
+ 
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && offScreenMenu.classList.contains('active')) {
+            hamMenu.classList.remove('active');
+            offScreenMenu.classList.remove('active');
+        }
+    });
+} else {
+    console.error('Hamburger menu or off-screen menu elements not found');
+}
+
+// Add event listener sa burger
+const menuItems = document.querySelectorAll('.off-screen-menu ul li');
+menuItems.forEach(item => {
+    item.addEventListener('click', function() {
+        hamMenu.classList.remove('active');
+        offScreenMenu.classList.remove('active');
+        body.classList.remove('menu-open');
+        const menuText = this.textContent.trim().toLowerCase();
+            
+        // Show home if home
+        if (menuText === 'home') {
+            if (window.location.href === "http://localhost/lifelink/home.php") {
+                return;
+            } else {
+                window.location.href = "home.php";
+            }
+        } else if (menuText === 'login') { // Check login para deretso sa dashboard if may session
+            checkLogin(); // Show login if login
+        } else if (menuText === 'about us') {
+            alert("Ceejay Cervantes, Allen Dinglas, John Ichiro Mananquil");
+        } else if (menuText === 'contact') {
+            alert("Insert LifeLink Team Contact");
+        }
+    });
+});
+
+// End of Burger JS
+
     // DOM element selectors
     const navLinks = document.querySelectorAll('.sidebar-links a, [data-page]');
     const pages = document.querySelectorAll('.page');
@@ -23,12 +100,12 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize modals
     initializeModals();
-
-    showAppointmentDetails();
     
     // Initialize request actions
     initializeRequestActions();
     
+    
+
     // Initialize forms
     initializeForms();
     
@@ -46,9 +123,11 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Start request simulation
     startRequestSimulation();
+
+    showAppointmentDetails();
     
     // HELPER FUNCTIONS
-    
+
     function addNotificationBadge(element, count) {
         let badge = element.querySelector('.sidebar-notification-badge');
         
@@ -226,6 +305,66 @@ document.addEventListener('DOMContentLoaded', function() {
     function initializeRequestActions() {
         const acceptButtons = document.querySelectorAll('.accept-request');
         acceptButtons.forEach(button => {
+            button.onclick = function(e) {
+                let acceptForm = this.parentElement;
+                if (confirm("Accept blood request?") == true) {
+                    acceptForm.submit();
+                } else e.preventDefault();
+            }
+        });
+
+        const completeButtons = document.querySelectorAll('.complete-request');
+        completeButtons.forEach(button => {
+            button.onclick = function(e) {
+                let completeForm = this.parentElement;
+                if (confirm("Mark request as done?") == true) {
+                    completeForm.submit();
+                } else e.preventDefault();
+            }
+        });
+
+        const declineButtons = document.querySelectorAll('.decline-request');
+        declineButtons.forEach(button => {
+            button.onclick = function(e) {
+                let declineForm = this.parentElement;
+                if (confirm("Decline request?") == true) {
+                    declineForm.submit();
+                } else e.preventDefault();
+            }
+        });
+
+        const cancelButtons = document.querySelectorAll('.cancel-request');
+        cancelButtons.forEach(button => {
+            button.onclick = function(e) {
+                let cancelForm = this.parentElement;
+                if (confirm("Cancel request? [Please inform requester beforehand via their contact number]") == true) {
+                    cancelForm.submit();
+                } else e.preventDefault();
+            }
+        })
+
+        const deleteButtons = document.querySelectorAll('.delete-request');
+        deleteButtons.forEach(button => {
+            button.onclick = function(e) {
+                let deleteForm = this.parentElement;
+                if (confirm("Delete request? [Note: deleting request will remove it from your history]") == true) {
+                    deleteForm.submit();
+                } else e.preventDefault();
+            }
+        });
+
+        /* const archiveButtons = document.querySelectorAll('.archive-request');
+        archiveButtons.forEach(button => {
+            button.onclick = function(e) {
+                let archiveForm = this.parentElement;
+                if (confirm("Hide request?") == true) {
+                    archiveForm.submit();
+                } else e.preventDefault();
+            }
+        }) */
+       
+        /* const acceptButtons = document.querySelectorAll('.accept-request');
+        acceptButtons.forEach(button => {
             button.addEventListener('click', function() {
                 const requestItem = this.closest('.request-item');
                 
@@ -234,9 +373,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 this.classList.add('btn-outline');
                 this.disabled = true;
             });
-        });
+        }); */
         
-        const confirmAccept = document.getElementById('confirmAccept');
+        /* const confirmAccept = document.getElementById('confirmAccept');
         if (confirmAccept) {
             confirmAccept.addEventListener('click', function() {
                 const requestModal = document.getElementById('requestModal');
@@ -255,14 +394,14 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 });
             });
-        }
+        } */
         
-        const saveForLater = document.getElementById('saveForLater');
+        /* const saveForLater = document.getElementById('saveForLater');
         if (saveForLater) {
             saveForLater.addEventListener('click', function() {
                 document.getElementById('requestModal').style.display = 'none';
             });
-        }
+        } */
     }
     
     function initializeForms() {
@@ -337,27 +476,27 @@ document.addEventListener('DOMContentLoaded', function() {
     
     function initializeFilters() {
         // const filterBloodType = document.getElementById('filterBloodType');
-        const filterDistance = document.getElementById('filterDistance');
+        // const filterDistance = document.getElementById('filterDistance');
         const filterUrgency = document.getElementById('filterUrgency');
         const requestItems = document.querySelectorAll('#requests-page .request-list .request-item');
         
         function filterRequests() {
             // const bloodTypeValue = filterBloodType?.value || '';
-            const distanceValue = filterDistance?.value || '';
+            // const distanceValue = filterDistance?.value || '';
             const urgencyValue = filterUrgency?.value || '';
             
             let visibleCount = 0;
             
             requestItems.forEach(item => {
                 // const itemType = item.getAttribute('data-type');
-                const itemDistance = parseFloat(item.getAttribute('data-distance') || '0');
+                // const itemDistance = parseFloat(item.getAttribute('data-distance') || '0');
                 const itemUrgency = item.getAttribute('data-urgency');
                 
                 // const typeMatch = !bloodTypeValue || itemType === bloodTypeValue;
-                const distanceMatch = !distanceValue || itemDistance <= parseInt(distanceValue || '0');
+                // const distanceMatch = !distanceValue || itemDistance <= parseInt(distanceValue || '0');
                 const urgencyMatch = !urgencyValue || itemUrgency === urgencyValue;
                 
-                if ( /* typeMatch && */ distanceMatch && urgencyMatch) {
+                if ( /* typeMatch && distanceMatch && */ urgencyMatch) {
                     item.style.display = 'flex';
                     visibleCount++;
                 } else {
@@ -371,7 +510,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         }
         
-        [ /* filterBloodType, */ filterDistance, filterUrgency].forEach(filter => {
+        [ /* filterBloodType, filterDistance, */ filterUrgency].forEach(filter => {
             if (filter) {
                 filter.addEventListener('change', filterRequests);
             }

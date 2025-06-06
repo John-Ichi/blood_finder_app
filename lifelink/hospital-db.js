@@ -43,13 +43,15 @@ document.addEventListener('DOMContentLoaded', function() {
 
     let appointments = [];
 
-    let donationHistory = [
+    let donationHistory = [];
+
+    /* let donationHistory = [
         { name: 'Juan Dela Cruz', bloodType: 'O+', date: '2025-05-10', units: 1, status: 'Processed' },
         { name: 'Maria Santos', bloodType: 'A+', date: '2025-05-08', units: 1, status: 'Processed' },
         { name: 'Pedro Reyes', bloodType: 'B+', date: '2025-05-05', units: 1, status: 'Processed' },
         { name: 'Ana Lopez', bloodType: 'AB-', date: '2025-05-01', units: 1, status: 'Processed' },
         { name: 'Luis Garcia', bloodType: 'O-', date: '2025-04-28', units: 1, status: 'Processed' }
-    ];
+    ]; */
 
     let urgentRequests = [
         { id: 1, title: 'Emergency Surgery - Type O+', needed: '2025-05-15', quantity: 5, status: 'pending' },
@@ -86,7 +88,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     renderAppointments();
                 });
             } else if (sectionId === 'donation-history') {
-                renderDonationHistory();
+                fetch('_blood-bank-history.json')
+                .then(res => res.json())
+                .then(data => {
+                    donationHistory = data;
+                    renderDonationHistory();
+                });
             } else if (sectionId === 'dashboard') {
                 updateDashboard();
             } else if (sectionId === 'update-inventory') {
@@ -252,23 +259,27 @@ document.addEventListener('DOMContentLoaded', function() {
             showToast('Inventory updated successfully!');
         });
     }
-    
+
     // Appointments functions
     function renderAppointments() {
         const appointmentList = document.querySelector('.appointment-list');
         if (!appointmentList) return;
         
         appointmentList.innerHTML = '';
-        
+
         const statusFilter = document.getElementById('appointment-status')?.value || 'all';
         const bloodTypeFilter = document.getElementById('appointment-blood-type')?.value || 'all';
         
         const filteredAppointments = appointments.filter(appointment => {
             const statusMatch = statusFilter === 'all' || appointment.status === statusFilter;
-            const bloodTypeMatch = bloodTypeFilter === 'all' || appointment.bloodType === bloodTypeFilter;
+            const bloodTypeMatch = bloodTypeFilter === 'all' || appointment.blood_type === bloodTypeFilter;
             return statusMatch && bloodTypeMatch;
         });
         
+        if (filteredAppointments === null) {
+            appointmentList.innerHTML = '<p>No Requests Yet</p>';
+        }
+
         if (filteredAppointments.length === 0) {
             const noResults = document.createElement('div');
             noResults.className = 'no-results';
@@ -280,55 +291,157 @@ document.addEventListener('DOMContentLoaded', function() {
         filteredAppointments.forEach(appointment => {
             const appointmentItem = document.createElement('div');
             appointmentItem.classList.add('appointment-item', appointment.status);
-            appointmentItem.dataset.id = appointment.donation_id;
+            appointmentItem.dataset.donation_id = appointment.donation_id;
+            appointmentItem.dataset.hospital_id = appointment.hospital_id;
+            appointmentItem.dataset.donor_id = appointment.donor_id;
             
             let actionsHTML = '';
             if (appointment.status === 'Pending') {
                 actionsHTML = `
-                    <form method="GET" action="_appointments.php">
-                        <input type="text" name="donation_id" value="${appointment.donation_id}" style="display: none;">
-                        <button type="submit" class="btn-approve" data-id="${appointment.donation_id}" name="approve" value="true">Approve</button>
-                        <button type="submit" class="btn-reject" data-id="${appointment.donation_id}" name="reject" value="true">Reject</button>
-                    </form>
+                    <button class="btn-approve" data-id="${appointment.donation_id}">Approve</button>
+                    <button class="btn-reject" data-id="${appointment.donation_id}">Decline</button>
                 `;
             } else if (appointment.status === 'Approved') {
                 actionsHTML = `
-                    <form method="GET" action="_appointments.php">
-                        <input type="text" name="donation_id" value="${appointment.donation_id}" style="display: none;"> 
-                        <button type="submit" class="btn-complete" data-id="${appointment.donation_id}" name="complete" value="true">Mark as Completed</button>
-                        <button type="submit" class="btn-cancel" data-id="${appointment.donation_id}" name="reject" value="true">Cancel</button>
-                    </form>
+                    <button class="btn-complete" data-id="${appointment.donation_id}">Mark as Completed</button>
+                    <button class="btn-cancel" data-id="${appointment.donation_id}">Cancel</button>
                 `;
             }
             
             const formattedDate = formatDate(appointment.date_of_donation);
             
-            let unitsInfo = '';
-            if (appointment.status === 'completed' && appointment.units) {
+            /* let unitsInfo = '';
+            if (appointment.status === 'Completed' && appointment.units) {
                 unitsInfo = `<p><strong>Units Collected:</strong> ${appointment.units}</p>`;
+            } */
+
+            if (appointment.status != 'Completed') {
+                appointmentItem.innerHTML = `
+                    <div class="appointment-info">
+                        <h3>${appointment.donor_name}</h3>
+                        <p><strong>Blood Type:</strong> ${appointment.blood_type}</p>
+                        <p><strong>${appointment.status === 'Pending' ? 'Requested' : 
+                                    appointment.status === 'Approved' ? 'Scheduled' : 'Donation'} Date:</strong> ${formattedDate}</p>
+                        <p><strong>Status:</strong> ${capitalizeFirstLetter(appointment.status)}</p>
+                    </div>
+                    <div class="appointment-actions">
+                        ${actionsHTML}
+                    </div>
+                `;
+
+                appointmentList.appendChild(appointmentItem);
             }
-            
-            appointmentItem.innerHTML = `
-                <div class="appointment-info">
-                    <h3>${appointment.name}</h3>
-                    <p><strong>Blood Type:</strong> ${appointment.blood_type}</p>
-                    <p><strong>${appointment.status === 'Pending' ? 'Requested' : 
-                                appointment.status === 'Approved' ? 'Scheduled' : 'Donation'} Date:</strong> ${formattedDate}</p>
-                    <p><strong>Status:</strong> ${capitalizeFirstLetter(appointment.status)}</p>
-                    ${unitsInfo}
-                </div>
-                <div class="appointment-actions">
-                    ${actionsHTML}
-                </div>
-            `;
-            
-            appointmentList.appendChild(appointmentItem);
+
+            declineBtn = document.querySelectorAll('.btn-reject');
+            declineBtn.forEach(button => {
+                button.onclick = function(e) {
+                    if (confirm('Decline donation appointment request?') == true) {
+                        const modal = document.getElementById('confirmModal');
+                        const id = this.closest('.appointment-item').dataset.donation_id;
+
+                        modal.innerHTML = `
+                            <form method="GET" action="_appointments.php" id="declineForm">
+                                <input type="text" name="donation_id" value="${id}">
+                                <button type="submit" name="decline" value="true"></button>
+                            </form>
+                        `;
+
+                        document.getElementById(declineForm).submit();
+                    } else e.preventDefault();
+                }
+            });
+
+            // Confirmation form
+            approveBtn = document.querySelectorAll('.btn-approve');
+            approveBtn.forEach(button => {
+                button.onclick = function(e) {
+                    e.preventDefault();
+
+                    const modal = document.getElementById('confirmModal');
+                    const name = this.closest('.appointment-item').querySelector('h3').innerHTML;
+                    const id = this.closest('.appointment-item').dataset.donation_id;
+
+                    modal.innerHTML = `
+                        <div class="modal-content">
+                            <span class="close-modal">&times;</span>
+                            <h2>Confirm</h2>
+                            <div class="confirmation-message">
+                                <p>Approve appointment for <b>${name}</b>?</p>
+                            </div>
+                            <div class="modal-actions">
+                                <form method="GET" action="_appointments.php">
+                                    <input type="number" name="donation_id" value="${id}" style="display: none;">
+                                    <button type="submit" name="approve" value="true">Confirm</button>
+                                    <button class="close-modal">Cancel</button>
+                                </form>
+                            </div>
+                        </div>
+                    `;
+
+                    modal.style.display = 'flex';
+
+                    modal.querySelectorAll('.close-modal').forEach(button => {
+                        button.onclick = function(e) {
+                            e.preventDefault();
+                            modal.style.display = 'none';
+                        }
+                    });
+                }
+            });
+
+            completeBtn = document.querySelectorAll('.btn-complete');
+            completeBtn.forEach(button => {
+                button.onclick = function(e) {
+                    e.preventDefault();
+
+                    const modal = document.getElementById('confirmModal');
+                    const donation_id = this.closest('.appointment-item').dataset.donation_id;
+                    const hospital_id = this.closest('.appointment-item').dataset.hospital_id;
+                    const donor_id = this.closest('.appointment-item').dataset.donor_id;
+
+                    modal.innerHTML = `
+                        <div class="modal-content">
+                            <span class="close-modal">&times;</span>
+                            <h2>Confirm Completion</h2>
+                            <div class="completion_form">
+                                <p>Fill in the details of the donation</p>
+                            </div>
+                            <div class="modal-actions">
+                                <form method="POST" action="_appointments.php">
+                                    <input type="text" name="donation_id" value="${donation_id}" style="display: none;">
+                                    <input type="text" name="hospital_id" value="${hospital_id}" style="display: none;">
+                                    <input type="text" name="donor_id" value="${donor_id}" style="display: none;">
+                                    <p>Date/time of extraction:</p>
+                                    <input type="datetime-local" name="extraction_datetime" step="1" required>
+                                    <p>Units Extracted:</p>
+                                    <input type="number" name="units" value="1" min="1" required>
+                                    <p>Blood Form Factor:</p>
+                                    <select name="blood_component" required>
+                                        <option value="whole">Whole Blood</option>
+                                    </select>
+                                    <button type="submit" name="complete">Test</button>
+                                </form>
+                            </div>
+                        </div>
+                    `;
+                    
+                    modal.style.display = 'flex';
+
+                    modal.querySelector('.close-modal').onclick = (e) => {
+                        e.preventDefault();
+                        modal.style.display = 'none';
+                    }
+                }
+            });
         });
         
-        appointmentList.querySelectorAll('button').forEach(button => {
+        /* appointmentList.querySelectorAll('button').forEach(button => {
             button.addEventListener('click', handleAppointmentAction);
-        });
+        }); */
     }
+        
+        
+
     
     // Appointment filters
     const appointmentStatusFilter = document.getElementById('appointment-status');
@@ -353,11 +466,14 @@ document.addEventListener('DOMContentLoaded', function() {
                       this.classList.contains('btn-reject') ? 'rejected' :
                       this.classList.contains('btn-complete') ? 'completed' : 'cancelled';
                       
-        if (action === 'approved') {
+        if (action === 'Approved') {
+            e.preventDefault();
             alert('Approved');
         }
 
         if (action === 'completed') {
+            e.preventDefault();
+            alert('test');
             const appointment = appointments[appointmentIndex];
             const collectedUnits = 1;
             
@@ -427,9 +543,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const dateValue = document.getElementById('history-date').value;
         
         let filteredHistory = donationHistory.filter(item => {
-            const nameMatch = !searchValue || item.name.toLowerCase().includes(searchValue.toLowerCase());
-            const typeMatch = bloodType === 'all' || item.bloodType === bloodType;
-            const dateMatch = !dateValue || item.date === dateValue;
+            const nameMatch = !searchValue || item.donor_name.toLowerCase().includes(searchValue.toLowerCase());
+            const typeMatch = bloodType === 'all' || item.blood_type === bloodType;
+            const dateMatch = !dateValue || item.extraction_datetime.substring(0, 10) === dateValue;
             return nameMatch && typeMatch && dateMatch;
         });
         
@@ -443,11 +559,11 @@ document.addEventListener('DOMContentLoaded', function() {
         filteredHistory.forEach(item => {
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${item.name}</td>
-                <td>${item.bloodType}</td>
-                <td>${formatDate(item.date)}</td>
-                <td>${item.units}</td>
-                <td>${item.status}</td>
+                <td>${item.donor_name}</td>
+                <td>${item.blood_type}</td>
+                <td>${formatDateTime(item.extraction_datetime)}</td>
+                <td>${item.component}</td>
+                <td>${item.units_collected}</td>
             `;
             tableBody.appendChild(row);
         });
@@ -457,40 +573,6 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('donor-search')?.addEventListener('input', renderDonationHistory);
     document.getElementById('history-blood-type')?.addEventListener('change', renderDonationHistory);
     document.getElementById('history-date')?.addEventListener('change', renderDonationHistory);
-    
-    // Profile form
-    /* const profileForm = document.getElementById('profile-form');
-    if (profileForm) {
-        profileForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            showToast('Profile updated successfully!');
-        });
-    } */
-    
-    // Password form
-    /* const passwordForm = document.getElementById('password-form');
-    if (passwordForm) {
-        passwordForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const currentPassword = document.getElementById('current-password').value;
-            const newPassword = document.getElementById('new-password').value;
-            const confirmPassword = document.getElementById('confirm-password').value;
-            
-            if (newPassword !== confirmPassword) {
-                showToast('Passwords do not match!', 'error');
-                return;
-            }
-            
-            if (newPassword.length < 8) {
-                showToast('Password must be at least 8 characters!', 'error');
-                return;
-            }
-            
-            this.reset();
-            showToast('Password changed successfully!');
-        });
-    } */
     
     // Urgent requests functions
     function setupUrgentRequests() {
@@ -641,7 +723,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }); // Refactored
     
     // Helper functions
-    function showToast(message, type = 'success') {
+    /* function showToast(message, type = 'success') {
         let toastContainer = document.querySelector('.toast-container');
         if (!toastContainer) {
             toastContainer = document.createElement('div');
@@ -666,7 +748,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 toastContainer.removeChild(toast);
             }, 300);
         }, 3000);
-    }
+    } */
     
     function formatDate(dateString) {
         if (!dateString) return 'N/A';
@@ -674,17 +756,17 @@ document.addEventListener('DOMContentLoaded', function() {
         return date.toLocaleDateString('en-US', { month: '2-digit', day: '2-digit', year: 'numeric' });
     }
     
-    /* function formatDateTime(dateTimeString) {
+    function formatDateTime(dateTimeString) {
         if (!dateTimeString) return 'N/A';
         const date = new Date(dateTimeString);
         return date.toLocaleDateString('en-US', { 
-            month: '2-digit', 
+            month: 'long', 
             day: '2-digit', 
             year: 'numeric',
             hour: '2-digit',
             minute: '2-digit'
         });
-    } */
+    }
     
     function capitalizeFirstLetter(string) {
         return string.charAt(0).toUpperCase() + string.slice(1);

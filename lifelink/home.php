@@ -78,9 +78,8 @@ if(isset($_POST['signup'])) {
             <span>LifeLink</span>
         </a>
         <div class="nav-links">
-            <!--<a href="#">Home</a>-->
             <a href="donors.php">Donors</a>
-            <a href="#">Blood Banks</a>
+            <a href="bloodbanks.php">Blood Banks</a>
         </div>
         <div class="ham-menu">
             <span></span>
@@ -210,7 +209,7 @@ if(isset($_POST['signup'])) {
                             <form action="#" id="forgot-password-form">
                             
                                 <div class="input-field">
-                                    <input type="email" required />
+                                    <input type="email" required/>
                                     <label>Email</label>
                                 </div>
                                 <button type="submit">Send Reset Link</button>
@@ -222,6 +221,7 @@ if(isset($_POST['signup'])) {
                         </div>
                     </div>
                 </div>
+                
             </section>  
 
             <div class="hero-content">

@@ -26,7 +26,7 @@ if(isset($_POST['submit'])) { // submit donor information [name, blood type, add
     $address = $municipality . ", " . $province;
 
     $sql = "INSERT INTO
-    donor_info (`donor_id`,`name`,`blood_type`,`address`,`contact`)
+    donor_info (`donor_id`,`donor_name`,`blood_type`,`address`,`contact`)
     VALUES ('$sess_id','$_POST[name]','$_POST[blood_type]','$address','$_POST[contact]')";
     $rs = $conn->query($sql);
     header('Location: donor-db.php');
@@ -95,7 +95,7 @@ if(isset($_POST['submit'])) { // submit donor information [name, blood type, add
                         </ul>
                     </div>
                 </div>
-                <form method="POST">
+                <form method="POST" id="registration">
                     <div class="form-one form-step active">
                         <svg class="form-step-svg" viewBox="0 0 100 100" fill="#cf1d1d" xmlns="http://www.w3.org/2000/svg" aria-label="User Profile">
                             <title>User Profile</title>
