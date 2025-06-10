@@ -2,6 +2,9 @@
 include '_functions.php';
 $conn = connect();
 
+$today = date("Y-m-d");
+echo $today;
+
 $current_session = $_SESSION['hospital_email'];
 
 if(!$current_session) {

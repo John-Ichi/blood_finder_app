@@ -269,6 +269,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const statusFilter = document.getElementById('appointment-status')?.value || 'all';
         const bloodTypeFilter = document.getElementById('appointment-blood-type')?.value || 'all';
+
+        if (appointments == null) {
+            appointmentList.innerHTML = '<p>No Requests Yet</p>';
+        }
         
         const filteredAppointments = appointments.filter(appointment => {
             const statusMatch = statusFilter === 'all' || appointment.status === statusFilter;
@@ -335,19 +339,35 @@ document.addEventListener('DOMContentLoaded', function() {
             declineBtn = document.querySelectorAll('.btn-reject');
             declineBtn.forEach(button => {
                 button.onclick = function(e) {
-                    if (confirm('Decline donation appointment request?') == true) {
-                        const modal = document.getElementById('confirmModal');
-                        const id = this.closest('.appointment-item').dataset.donation_id;
+                    const modal = document.getElementById('confirmModal');
+                    const name = this.closest('.appointment-item').querySelector('h3').innerHTML;
+                    const id = this.closest('.appointment-item').dataset.donation_id;
 
-                        modal.innerHTML = `
-                            <form method="GET" action="_appointments.php" id="declineForm">
-                                <input type="text" name="donation_id" value="${id}">
-                                <button type="submit" name="decline" value="true"></button>
-                            </form>
-                        `;
+                    modal.innerHTML = `
+                        <div class="modal-content">
+                            <span class="close-modal">&times;</span>
+                            <h2>Confirm</h2>
+                            <div class="confirmation-message">
+                                <p>Cancel appointment for <b>${name}</b>?</p>
+                            </div>
+                            <div class="modal-actions">
+                                <form method="GET" action="_appointments.php">
+                                    <input type="text" name="donation_id" value="${id}" style="display: none;">
+                                    <button type="submit" name="decline" value="true">Confirm</button>
+                                    <button class="close-modal">Cancel</button>
+                                </form>
+                            </div>
+                        </div>
+                    `;
 
-                        document.getElementById(declineForm).submit();
-                    } else e.preventDefault();
+                    modal.style.display = 'flex';
+
+                    modal.querySelectorAll('.close-modal').forEach(button => {
+                        button.onclick = function(e) {
+                            e.preventDefault();
+                            modal.style.display = 'none';
+                        }
+                    });
                 }
             });
 
@@ -541,7 +561,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const searchValue = document.getElementById('donor-search').value;
         const bloodType = document.getElementById('history-blood-type').value;
         const dateValue = document.getElementById('history-date').value;
-        
+
+        if (donationHistory == null) {
+            const row = document.createElement('tr');
+            row.innerHTML = `<td colspan="5" class="no-results">No donation records found</td>`;
+            tableBody.appendChild(row);
+            return;
+        }
+
         let filteredHistory = donationHistory.filter(item => {
             const nameMatch = !searchValue || item.donor_name.toLowerCase().includes(searchValue.toLowerCase());
             const typeMatch = bloodType === 'all' || item.blood_type === bloodType;
