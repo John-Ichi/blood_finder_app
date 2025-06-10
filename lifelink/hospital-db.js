@@ -714,13 +714,64 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Logout functionality
+
+
+    // const logoutBtn = document.getElementById('logout-btn');
+    // logoutBtn.addEventListener('click', function(e) {
+        //e.preventDefault();
+        //if (confirm('Are you sure you want to logout?')) {
+            //window.location.href = "_logout.php";
+        //}
+    //}); 
+    
     const logoutBtn = document.getElementById('logout-btn');
-    logoutBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        if (confirm('Are you sure you want to logout?')) {
-            window.location.href = "_logout.php";
+        const logoutModal = document.getElementById('logoutModal');
+        const confirmLogout = document.getElementById('confirmLogout');
+        const cancelLogout = document.getElementById('cancelLogout');
+        const closeModal = document.querySelector('.close-modal');
+        
+        if (logoutBtn && logoutModal) {
+
+            logoutBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            logoutModal.style.display = 'flex';
+            });
+            
+            if (confirmLogout) {
+                confirmLogout.addEventListener('click', function() {
+                    logoutModal.style.display = 'none';
+                    showToast('Logging out...', 'success');
+                    setTimeout(() => {
+                    window.location.href = '_logout.php';
+                    }, 1000);
+                });
+            }
+            
+            if (cancelLogout) {
+                cancelLogout.addEventListener('click', function() {
+                    logoutModal.style.display = 'none';
+                });
+            }
+            
+            if (closeModal) {
+                closeModal.addEventListener('click', function() {
+                    logoutModal.style.display = 'none';
+                });
+            }
+            
+            logoutModal.addEventListener('click', function(e) {
+                if (e.target === logoutModal) {
+                    logoutModal.style.display = 'none';
+                }
+            });
+            
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && logoutModal.style.display === 'flex') {
+                    logoutModal.style.display = 'none';
+                }
+            });
         }
-    }); // Refactored
+// Refactored
     
     // Helper functions
     /* function showToast(message, type = 'success') {

@@ -451,7 +451,19 @@ if(isset($_POST['update_password'])) {
             </div>
         </div>
     </div>-->
-
+    <!-- Logout Confirmation Modal -->
+    <div class="modal" id="logoutModal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Confirm Logout</h2>
+            <p>Are you sure you want to log out?</p>
+            <div class="modal-actions" style="margin-top: 1.2rem;">
+                <button class="btn btn-primary" id="confirmLogout">Yes, Log Out</button>
+                <button class="btn btn-outline" style="margin-left: 0.5rem;" id="cancelLogout">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
     <script src="hospital-db.js"></script>
 </body>
 </html>
