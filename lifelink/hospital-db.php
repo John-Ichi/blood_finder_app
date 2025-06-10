@@ -427,7 +427,7 @@ if(isset($_POST['update_password'])) {
 
     <div class="modal" id="confirmModal"></div>
 
-<!--<div class="modal" id="completionForm">
+<div class="modal" id="completionForm">
         <div class="modal-content">
             <span class="close-modal">&times;</span>
             <h2>Completion Form</h2>
@@ -450,14 +450,26 @@ if(isset($_POST['update_password'])) {
                 </form>
             </div>
         </div>
-    </div>-->
-
+    </div>
+    <!-- Logout Confirmation Modal -->
+    <div class="modal" id="logoutModal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Confirm Logout</h2>
+            <p>Are you sure you want to log out?</p>
+            <div class="modal-actions" style="margin-top: 1.2rem;">
+                <button class="btn btn-primary" id="confirmLogout">Yes, Log Out</button>
+                <button class="btn btn-outline" style="margin-left: 0.5rem;" id="cancelLogout">Cancel</button>
+            </div>
+        </div>
+    </div>
+    
     <script src="hospital-db.js"></script>
 </body>
 </html>
 
-<!--
-<div class="appointment-item pending">
+
+ <div class="appointment-item pending">
                         <div class="appointment-info">
                             <h3><i class="fas fa-user"></i> Juan Dela Cruz</h3>
                             <p><i class="fas fa-tint"></i> <strong>Blood Type:</strong> O+</p>
@@ -489,5 +501,4 @@ if(isset($_POST['update_password'])) {
                             <p><i class="fas fa-check-circle"></i> <strong>Status:</strong> Completed</p>
                             <p><i class="fas fa-syringe"></i> <strong>Units Collected:</strong> 1</p>
                         </div>
-                    </div>
--->
+                    </div> 
