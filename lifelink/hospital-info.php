@@ -50,5 +50,10 @@ if(isset($_POST['submit'])) {
         <br><input type="text" name="contact"><br>
         <button type="submit" name="submit">Confirm</button>
     </form>
+                <form method="GET" action="_functions.php">
+                    <input type="text" name="logoutBB" value="true" style="display: none;">
+                    <button class="btn btn-primary" id="confirmLogout">Yes, Log Out</button>
+                    <button class="btn btn-outline" style="margin-left: 0.5rem;" id="cancelLogout">Cancel</button>
+                </form>
 </body>
 </html>
