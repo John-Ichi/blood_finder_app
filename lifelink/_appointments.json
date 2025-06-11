@@ -1,0 +1,38 @@
+[
+    {
+        "donor_id": "15",
+        "email": "johnichiro.mananquil.photos@gmail.com",
+        "donor_name": "Ceejay Cervantes",
+        "blood_type": "B-",
+        "donation_id": "49",
+        "date_of_donation": "2025-06-18",
+        "preferred_time": "Morning (8AM - 12PM)",
+        "hospital_id": "4",
+        "additional_info": "No additional information regarding donor.",
+        "status": "Approved"
+    },
+    {
+        "donor_id": "14",
+        "email": "yukinoo0713@gmail.com",
+        "donor_name": "Finalizing",
+        "blood_type": "A+",
+        "donation_id": "47",
+        "date_of_donation": "2025-06-18",
+        "preferred_time": "Afternoon (12PM - 4PM)",
+        "hospital_id": "4",
+        "additional_info": "No additional information regarding donor.",
+        "status": "Completed"
+    },
+    {
+        "donor_id": "16",
+        "email": "ichiljay@gmail.com",
+        "donor_name": "Ichoooi",
+        "blood_type": "AB+",
+        "donation_id": "50",
+        "date_of_donation": "2025-06-18",
+        "preferred_time": "Afternoon (12PM - 4PM)",
+        "hospital_id": "4",
+        "additional_info": "No additional information regarding donor.",
+        "status": "Pending"
+    }
+]

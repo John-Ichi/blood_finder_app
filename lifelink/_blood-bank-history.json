@@ -1,0 +1,15 @@
+[
+    {
+        "donor_name": "Finalizing",
+        "blood_type": "A+",
+        "history_id": "49",
+        "request_id": null,
+        "donation_id": "47",
+        "donor_id": "14",
+        "hospital_id": "4",
+        "extraction_datetime": "2025-06-18 15:50:29",
+        "component": "Whole Blood",
+        "units_collected": "1",
+        "hidden": "0"
+    }
+]
