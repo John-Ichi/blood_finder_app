@@ -3,8 +3,6 @@ if (window.history.replaceState) {
     window.history.replaceState(null, null, window.location.href);
 }
 
-console.log(window.location.href);
-
 document.addEventListener('DOMContentLoaded', function() {
     // AJAX: Check if naka login si user
     function checkLogin() {
@@ -65,7 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Show home if home
             if (menuText === 'home') {
-                if (window.location.href === "http://localhost/lifelink/home.php") {
+                if (window.location.href === "http://localhost/lifelink/home.php" || window.location.href === "http://localhost/lifelink/home.php#") {
                 return;
             } else {
                 window.location.href = "home.php";
@@ -242,7 +240,7 @@ document.addEventListener('DOMContentLoaded', function() {
     setupInputFields(forgotFormElement);
 
     forgotFormElement.onsubmit = function(e) {
-        alert('Feature not yet implemented');
+        alert('not yet implemented');
     }
 
     // Signup form [ refactored ]

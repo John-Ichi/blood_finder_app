@@ -65,7 +65,7 @@ let active = 1; // step number
 nextButton.addEventListener('click', () => {
     if (active == 1) { // step number 1
         if (!nameField.value) { // check if empty
-            alert('Please enter your name');
+            alert('please enter your name');
         } else {
             active++;
             if (active > steps.length) {
@@ -76,7 +76,7 @@ nextButton.addEventListener('click', () => {
         }
     } else if (active == 2) { // step 2
         if (bloodTypeField.value == '') { // check if empty
-            alert('Please select a blood type');
+            alert('please select a blood type');
         } else {
             active++;
             if (active > steps.length) {
@@ -90,9 +90,9 @@ nextButton.addEventListener('click', () => {
         secondDigit = contactNumber.charAt(1); // get second digit
         
         if (!contactNumber) { // check if empty
-            alert('Please enter your phone number');
+            alert('please enter your phone number');
         } else if (firstDigit != '0' || secondDigit != '9' || contactNumber.length != 11) { // validate phone number [starts in 09]
-            alert('Please enter a valid 11-digit number');
+            alert('please enter a valid 11-digit number');
         } else {
             active++;
             if (active > steps.length) {
@@ -116,10 +116,10 @@ const submitButton = document.querySelector('.btn-submit');
 submitButton.addEventListener('click', (e) => { // submit
     if (active == 4) { // step 4
         if (!provinceField.value) { // check if empty
-            alert('Please enter your province');
+            alert('please enter your province');
             e.preventDefault(); // prevent submit
         } else if (!municipalityField.value) { // check if empty
-            alert('Please enter your municipality');
+            alert('please enter your municipality');
             e.preventDefault(); // prevent submit
         }
     }
@@ -150,7 +150,7 @@ const registrationForm = document.getElementById('registration');
 registrationForm.onsubmit = function(e) {
     if (!nameField.value || !bloodTypeField.value || !contactField.value || !provinceField.value || !municipalityField.value) {
         e.preventDefault();
-        alert("Please enter your information");
+        alert("please enter your complete information");
     }
 }
 

@@ -19,9 +19,142 @@ $mail->Password   = 'rymk licv rxna awlq';
 $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
 $mail->Port       = 465;
 
+$lifelink_email = $mail->Username;
+
 function connect(){
     $conn = new mysqli('localhost','root','','blood_finder_app');
     return $conn;
+}
+
+// Hospital-db functions
+if (isset($_GET['logoutBB']) && $_GET['logoutBB'] == true) { // Logout hospital
+    unset($_SESSION['hospital_email']);
+    header('Location: hospital-login.php');
+}
+
+if (isset($_GET['approveAppointment']) && $_GET['approveAppointment'] == true) { // Approve appointment
+    $conn = connect();
+    $sql =
+        "UPDATE donation_appointments
+        SET status='Approved'
+        WHERE donation_id='$_GET[donation_id]'";
+    $rs = $conn->query($sql);
+
+    echo "
+        <script>
+            alert('Appointment approved!');
+            window.location.href = 'hospital-db.php';
+        </script>
+    ";
+}
+
+if (isset($_GET['declineAppointment']) && $_GET['declineAppointment'] == true) { // Decline appointment
+    $conn = connect();
+    $sql =
+        "DELETE FROM donation_appointments
+        WHERE donation_id='$_GET[donation_id]'";
+    $rs = $conn->query($sql);
+
+    $mail->setFrom($mail->Username);
+    $mail->addAddress($_GET['email']);
+    $mail->Subject = 'Donation Appointment';
+    $mail->Body =
+        "Your donation appointment request to " . $_GET['name'] . " has been declined.
+        
+        Best regards, LifeLink Team";
+    $mail->send();
+
+    header('Location: hospital-db.php');
+}
+
+if (isset($_POST['finalizeAppointment'])) { // Finalize appointment
+    $conn = connect();
+    $donation_id = $_POST['donation_id'];
+    $hospital_id = $_POST['hospital_id'];
+    $donor_id = $_POST['donor_id'];
+    $donation_datetime = $_POST['extraction_datetime'];
+
+    $sql = // Update appointment
+        "UPDATE donation_appointments
+        SET status='Completed'
+        WHERE donation_id='$donation_id'";
+    $rs = $conn->query($sql);
+
+    $sql = // Update history
+        "INSERT INTO donation_history
+        (`donation_id`,`donor_id`,`hospital_id`,`extraction_datetime`,`component`,`units_collected`)
+        VALUES
+        ('$donation_id','$donor_id','$hospital_id','$donation_datetime','$_POST[blood_component]','$_POST[units]')";
+    $rs = $conn->query($sql);
+
+    $date_obj = new DateTime($donation_datetime);
+    $date_add = date_add($date_obj, date_interval_create_from_date_string("42 days"));
+    $next_available = $date_add->format("Y-m-d H:i:s");
+
+    $sql = // Update last donation/next available donor
+        "UPDATE donor_info
+        SET next_available='$next_available'
+        WHERE donor_id='$donor_id'";
+    $rs = $conn->query($sql);
+
+    header('Location: hospital-db.php');
+}
+
+if (isset($_GET['cancelAppointmentBB']) && $_GET['cancelAppointmentBB'] == true) { // Cancel appointment
+    $conn = connect();
+    $sql =
+        "DELETE FROM donation_appointments
+        WHERE donation_id='$_GET[donation_id]'";
+    $rs = $conn->query($sql);
+
+    $mail->setFrom($mail->Username);
+    $mail->addAddress($_GET['email']);
+    $mail->Subject = 'Donation Appointment';
+    $mail->Body =
+        "Your donation appointment to " . $_GET['name'] . " has been cancelled.
+        
+        Best regards, LifeLink Team";
+    $mail->send();
+
+    echo "
+        <script>
+            alert('Appointment cancelled!');
+            window.location.href = 'hospital-db.php';
+        </script>
+    ";
+}
+
+// Donor-db functions
+if (isset($_GET['logoutDonor']) && $_GET['logoutDonor'] == true) { // Logout donor
+    unset($_SESSION['donor_email']);
+    header('Location: home.php');
+}
+
+
+if (isset($_GET['cancelAppointmentDonor']) && $_GET['cancelAppointmentDonor'] == true) {
+    $conn = connect();
+    $sql =
+        "DELETE FROM donation_appointments
+        WHERE donation_id='$_GET[donation_id]'";
+    $rs = $conn->query($sql);
+
+    echo "
+        <script>
+            alert('appointment cancelled');
+            window.location.href = 'donor-db.php';
+        </script>
+    ";
+}
+
+if (isset($_GET['hide_history_id'])) {
+    $conn = connect();
+    $sql =
+        "UPDATE donation_history
+        SET hidden=1
+        WHERE history_id='$_GET[hide_history_id]'";
+    $rs = $conn->query($sql);
+
+    header('Location: hospital-db.php');
 }
 
 if (isset($_POST['acceptBloodRequest'])) {
@@ -141,12 +274,17 @@ if (isset($_POST['sendmail'])) {
         " . $_POST['message'] . "
         Contact information: 
         " .
-        $_POST['email'] . 
-        $_POST['number'] . "
+        $_POST['email'] . "
+        " . $_POST['number'] . "
         Regards, LifeLink Team";
     $mail->send();
 
-    header('Location: bloodbanks.php');
+    echo "
+    <script>
+        alert('Email sent!' Please refer to their phone number for anything urgent. Thank you!);
+        window.location.href = 'bloodbanks.php';
+    </script>
+    ";
 }
 
 if (isset($_POST['deleteBloodRequest'])) {
@@ -168,6 +306,12 @@ if (isset($_POST['archiveBloodRequest'])) {
     $rs = $conn->query($sql);
 
     header('Location: donor-db.php');
+}
+
+function checkLoggedIn($current_session) {
+    if (isset($current_session) && $current_session != '') {
+        header('Location: donor-db.php');
+    }
 }
 
 function updateAvailablity() {
@@ -251,12 +395,16 @@ function getDonationAppointments($sess_id) {
     $conn = connect();
 
     $sql =
-        "SELECT donor_info.donor_id, donor_info.donor_name, donor_info.blood_type, donation_appointments.*
+        "SELECT donor_info.donor_id, donor_login_info.email, donor_info.donor_name, donor_info.blood_type, donation_appointments.*
         FROM donor_info
         RIGHT JOIN donation_appointments
         ON donation_appointments.donor_id = donor_info.donor_id
+        LEFT JOIN donor_login_info
+        ON donation_appointments.donor_id = donor_login_info.id
         WHERE hospital_id='$sess_id'
-        ORDER BY donation_id DESC";
+        ORDER BY
+        status='Approved' DESC,
+        date_of_donation ASC";
 
     $rs = $conn->query($sql);
 
@@ -280,7 +428,48 @@ function getHospitalList() {
     }
 }
 
+function checkExpiry() {
+    $conn = connect();
+    $sql = "SELECT date_needed FROM blood_requests";
+    $rs = $conn->query($sql);
+
+    $today = date("Y-m-d");
+
+    while ($row = $rs->fetch_assoc()) {
+        if ($row['date_needed'] < $today) {
+            $update = $conn->query("UPDATE blood_requests SET status='Expired' WHERE date_needed='$row[date_needed]'");
+        }
+    } 
+}
+
+function getAcceptedBloodRequest($sess_id) {
+    $conn = connect();
+    $sql = "SELECT status FROM blood_requests WHERE donor_id='$sess_id' AND status='Accepted'";
+    $rs = $conn->query($sql);
+    if ($rs->num_rows != 0) {
+        $hasAcceptedARequest = true;
+    } else $hasAcceptedARequest = false;
+    return $hasAcceptedARequest;
+}
+
+function hasAppointment($sess_id) {
+    $conn = connect();
+    $sql =
+        "SELECT status FROM donation_appointments
+        WHERE donor_id='$sess_id' AND status='Pending'
+        ORDER BY donation_id DESC LIMIT 1";
+    $rs = $conn->query($sql);
+
+    $hasAppointment = false;
+
+    if ($rs->num_rows != 0)  $hasAppointment = true;
+    
+    return $hasAppointment;
+}
+
 function getDonorRequests($sess_id) {
+    checkExpiry();
+
     $conn = connect();
     $sql =
         "SELECT donor_info.donor_name, blood_requests.*
@@ -293,6 +482,10 @@ function getDonorRequests($sess_id) {
     if($rs->num_rows === 0) {
         echo "<p>No blood requests yet.</p>";
     }
+
+    $blood_req = getAcceptedBloodRequest($sess_id);
+    $hasAppointment = hasAppointment($sess_id);
+
     $count = 0;
     while($row = $rs->fetch_assoc()) {
         $date = date_create($row['date_needed']);
@@ -303,7 +496,7 @@ function getDonorRequests($sess_id) {
             echo "
             <li class='request-item'" . ($row['urgent'] == 1 ? "data-urgency='urgent'" : '') . ">
                 <div class='request-info'>
-                    <h3>" . $row['request_description'] . "</h3>
+                    <h3>" . $row['request_description'] . ($row['status'] === 'Expired' ? ' [Expired]' : '') . "</h3>
                     <p>" . $row['point_of_donation'] . " - Needed by " . $date_needed . "</p>
                     <p>Requested by: " . $row['requester_name'] . "</p>" .
                     /* <p>Distance: insert km from you</p> */
@@ -313,17 +506,33 @@ function getDonorRequests($sess_id) {
                 "</div>";
             
             if ($row['status'] === 'Pending') {
-                echo "
-                <div class='request-actions'>
-                    <form method='POST' action='_functions.php'>
-                        <input type='text' name='requestId' value='" . $row['request_id'] . "' style='display: none;'>
-                        <input type='text' name='requestContact' value='" . $row['contact_email'] . "' style='display: none;'>
-                        <input type='text' name='donorName' value='" . $row['donor_name'] . "' style='display: none;'>
-                        <button class='btn btn-primary btn-sm accept-request' name='acceptBloodRequest'>Accept</button>
-                        <button class='btn btn-outline btn-sm decline-request' name='declineBloodRequest'>Decline</button>
-                    </form>
-                </div>
-            </li>";
+                if ($blood_req === true || $hasAppointment === true) {
+                    echo "
+                    <div class='request-actions'>
+                        <form method='POST' action='_functions.php'>
+                            <input type='text' name='requestId' value='" . $row['request_id'] . "' style='display: none;'>
+                            <input type='text' name='requestContact' value='" . $row['contact_email'] . "' style='display: none;'>
+                            <input type='text' name='donorName' value='" . $row['donor_name'] . "' style='display: none;'>
+                            <fieldset disabled>
+                            <button class='btn btn-primary btn-sm accept-request' name='acceptBloodRequest'>Accept</button>
+                            <button class='btn btn-outline btn-sm decline-request' name='declineBloodRequest'>Decline</button>
+                            </fieldset>
+                        </form>
+                    </div>
+                </li>";    
+                } else {
+                    echo "
+                    <div class='request-actions'>
+                        <form method='POST' action='_functions.php'>
+                            <input type='text' name='requestId' value='" . $row['request_id'] . "' style='display: none;'>
+                            <input type='text' name='requestContact' value='" . $row['contact_email'] . "' style='display: none;'>
+                            <input type='text' name='donorName' value='" . $row['donor_name'] . "' style='display: none;'>
+                            <button class='btn btn-primary btn-sm accept-request' name='acceptBloodRequest'>Accept</button>
+                            <button class='btn btn-outline btn-sm decline-request' name='declineBloodRequest'>Decline</button>
+                        </form>
+                    </div>
+                </li>";
+                }
             }
             
             if ($row['status'] === 'Accepted') {
@@ -332,7 +541,8 @@ function getDonorRequests($sess_id) {
                     <form method='POST' action='_functions.php' id='completeForm'>
                         <input type='text' name='requestId' value='" . $row['request_id'] . "' style='display: none;'>
                         <input type='text' name='donorId' value='" . $sess_id . "' style='display: none;'>
-                        <input type='text' name='date' value='" . $row['date_needed'] . "'>
+                        <input type='text' name='date' value='" . $row['date_needed'] . "' style='display: none;'>
+                        <input type='text' name='requestContact' value='" . $row['contact_email'] . "' style='display: none;'>
                         <button class='btn btn-primary btn-sm complete-request' name='completeBloodRequest'>Mark as Done</button>
                         <button class='btn btn-outline btn-sm cancel-request' name='cancelBloodRequest'>Cancel</button>
                     </form>
@@ -449,7 +659,8 @@ function getHospitalDBDonationHistory($sess_id) {
         FROM donation_history
         LEFT JOIN donor_info
         ON donation_history.donor_id = donor_info.donor_id
-        WHERE hospital_id='$sess_id' OR donation_id != null";
+        WHERE hospital_id='$sess_id' OR donation_id != null
+        ORDER BY hidden, extraction_datetime DESC";
     $rs = $conn->query($sql);
     
     if ($rs->num_rows != 0) {

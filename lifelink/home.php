@@ -2,6 +2,12 @@
 include '_functions.php';
 $conn = connect();
 
+$current_session = '';
+if (isset($_SESSION['donor_email'])) {
+    $current_session = $_SESSION['donor_email'];
+}
+checkLoggedIn($current_session);
+
 // Login
 if(isset($_POST['donor_login'])) {  
     $sql = "SELECT * FROM donor_login_info WHERE email='$_POST[donor_email]' AND is_active=1";
@@ -89,7 +95,6 @@ if(isset($_POST['signup'])) {
         <div class="off-screen-menu">
             <ul>
                 <li>Home</li>
-                <li>Login</li>
                 <li>About Us</li>
                 <li>Contact</li>
             </ul>

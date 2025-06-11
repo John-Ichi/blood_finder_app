@@ -333,23 +333,39 @@ const searchInput = document.getElementById('searchInput');
 const clearBtn = document.getElementById('clearBtn');
 const filterOptions = document.getElementById('filterOptions');
 
-let currentSearchTerm = document.getElementById('searchInput').value;
-let currentFilter = 'all';
+const bloodTypeFilter = document.getElementById('bloodTypeFilterValue').innerHTML.toUpperCase();
+
+let currentSearchTerm = searchInput.value;
+let currentFilter = bloodTypeFilter
+if (currentFilter == '') {
+    currentFilter = 'All';
+}
 
 let donors = [];
 
 fetch('_donor_list.json')
 .then(res => res.json())
 .then(data => {
-    if(currentSearchTerm != "") {
+    if(currentFilter != 'all') {
         donors = data;
-        console.log(donors);
-        const filteredDonors = filterDonors();
-        renderDonorCards(filteredDonors);
-    }
-    else {
+        filterOptions.querySelectorAll('.filter-btn').forEach(btn => {
+            if (currentFilter == btn.innerHTML) {
+                filterOptions.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentFilter = btn.dataset.filter;
+                const filteredDonors = filterDonors();
+                renderDonorCards(filteredDonors);
+            }
+        });
+    } else {
         donors = data;
-        renderDonorCards(donors);
+        filterOptions.querySelectorAll('.filter-btn').forEach(btn => {
+            if (currentFilter == btn.innerHTML) {
+                filterOptions.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                renderDonorCards(donors);
+            }
+        });
     }
 });
 
@@ -434,7 +450,7 @@ function filterDonors() {
     if (currentSearchTerm) {
         const searchTerm = currentSearchTerm.toLowerCase();
         filteredDonors = filteredDonors.filter(donor => 
-            donor.name.toLowerCase().includes(searchTerm) ||
+            donor.donor_name.toLowerCase().includes(searchTerm) ||
             donor.address.toLowerCase().includes(searchTerm) ||
             donor.blood_type.toLowerCase().includes(searchTerm)
         );
@@ -477,5 +493,22 @@ function setupEventListeners() {
 }
 
 setupEventListeners();
+
+/* function bloodTypeSearch() {
+    window.addEventListener('load', () => {
+        filterOptions.querySelectorAll('.filter-btn').forEach(btn => {
+        const bloodTypeSearchInput = document.getElementById('bloodTypeSearch').innerHTML.toUpperCase();
+        if (bloodTypeSearchInput == btn.innerHTML) {
+            filterOptions.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentFilter = btn.dataset.filter;
+            const filteredDonors = filterDonors();
+            renderDonorCards(filteredDonors);
+        }
+    });
+    });
+}
+
+bloodTypeSearch(); */
 
 // Grid display JS end

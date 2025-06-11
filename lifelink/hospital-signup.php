@@ -2,20 +2,24 @@
 include '_functions.php';
 $conn = connect();
 
-if(isset($_POST['hospital_signup'])) {
+if (isset($_SESSION['hospital_email'])) { // Check if logged in
+    header('Location: hospital-db.php');
+}
+
+if (isset($_POST['hospital_signup'])) {
     $email = $_POST['hospital_email']; 
     $password = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
 
-    if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $signup_error = "Please enter a valid email address!";
-    } elseif($password !== $confirm_password) {
+    } else if ($password !== $confirm_password) {
         $signup_error = "Passwords do not match!";
     } else {
         $check_sql = "SELECT * FROM hospital_login_info WHERE email='$email'";
         $result = $conn->query($check_sql);
                     
-        if($result->num_rows > 0) {
+        if ($result->num_rows > 0) {
             $signup_error = "Email already exists!";
         } else {
             $hashed_password = password_hash($password, PASSWORD_DEFAULT);
@@ -23,7 +27,7 @@ if(isset($_POST['hospital_signup'])) {
             $sql = "INSERT INTO hospital_login_info (email, password, is_active) 
             VALUES ('$email', '$hashed_password', 1)";
                             
-            if($conn->query($sql) === TRUE) {
+            if ($conn->query($sql) === TRUE) {
                 $signup_success = "Account created successfully!";
             } else {
                 $signup_error = "Error creating account!";
@@ -37,7 +41,7 @@ if(isset($_POST['hospital_signup'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>H-Email</title>
+    <title>LifeLink</title>
     <link rel="icon" href="resources/heartbeat-solid.svg">
     <style>
         .form-container {
@@ -66,6 +70,7 @@ if(isset($_POST['hospital_signup'])) {
             Confirm Password: <br><input type="password" name="confirm_password" required><br>
             <button type="submit" name="hospital_signup">Confirm</button>
         </form>
+        <a href="hospital-login.php">Login</a>
     </div>
 
     <script>

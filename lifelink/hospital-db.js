@@ -1,8 +1,11 @@
+// Reload
 if (window.history.replaceState) {
     window.history.replaceState(null, null, window.location.href);
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+
+    // Dummy info
     let bloodInventory = [
         { type: 'O-', units: 2, expiration: '2025-06-15', status: 'Critical' },
         { type: 'O+', units: 45, expiration: '2025-07-20', status: 'Good' },
@@ -14,86 +17,61 @@ document.addEventListener('DOMContentLoaded', function() {
         { type: 'AB+', units: 18, expiration: '2025-07-22', status: 'Good' }
     ];
 
-    /* let appointments = [
-        { 
-            id: 1,
-            name: 'Juan Dela Cruz', 
-            bloodType: 'O+', 
-            date: '2025-05-15T10:00:00', 
-            status: 'pending',
-            units: null
-        },
-        { 
-            id: 2,
-            name: 'Maria Santos', 
-            bloodType: 'A-', 
-            date: '2025-05-16T14:00:00', 
-            status: 'approved',
-            units: null
-        },
-        { 
-            id: 3,
-            name: 'Pedro Reyes', 
-            bloodType: 'B+', 
-            date: '2025-05-10T09:00:00', 
-            status: 'completed',
-            units: 1
-        }
-    ]; */
-
     let appointments = [];
+
+    fetch('_appointments.json')
+    .then(res => res.json())
+    .then(data => {
+        appointments = data;
+    });
 
     let donationHistory = [];
 
-    /* let donationHistory = [
-        { name: 'Juan Dela Cruz', bloodType: 'O+', date: '2025-05-10', units: 1, status: 'Processed' },
-        { name: 'Maria Santos', bloodType: 'A+', date: '2025-05-08', units: 1, status: 'Processed' },
-        { name: 'Pedro Reyes', bloodType: 'B+', date: '2025-05-05', units: 1, status: 'Processed' },
-        { name: 'Ana Lopez', bloodType: 'AB-', date: '2025-05-01', units: 1, status: 'Processed' },
-        { name: 'Luis Garcia', bloodType: 'O-', date: '2025-04-28', units: 1, status: 'Processed' }
-    ]; */
+    fetch('_blood-bank-history.json')
+    .then(res => res.json())
+    .then(data => {
+        donationHistory = data;
+        updateDashboard(); 
+    });
 
+    // Dummy info
     let urgentRequests = [
         { id: 1, title: 'Emergency Surgery - Type O+', needed: '2025-05-15', quantity: 5, status: 'pending' },
         { id: 2, title: 'Cardiac Bypass - Type A-', needed: '2025-05-18', quantity: 3, status: 'pending' }
     ];
 
+    // Inventory button
+    addToInventoryBtn = document.getElementById('addToInventory');
+    addToInventoryBtn.onclick = function(e) {
+        e.preventDefault();
+        alert('not implemented yet');
+    }
+
     // Navigation and UI setup
     const navLinks = document.querySelectorAll('.hospital-sidebar a');
     navLinks.forEach(link => {
-    link.addEventListener('click', function(e) {
-        e.preventDefault();
-        
-        navLinks.forEach(navLink => {
-            navLink.classList.remove('active');
-        });
-        
-        this.classList.add('active');
-        
-        document.querySelectorAll('.content-section').forEach(section => {
-            section.classList.remove('active');
-        });
-        
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
             
+            navLinks.forEach(navLink => {
+                navLink.classList.remove('active');
+            });
+            
+            this.classList.add('active');
+            
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+                
             const sectionId = this.getAttribute('data-section');
             document.getElementById(sectionId).classList.add('active');
             
             if (sectionId === 'inventory') {
                 renderInventory();
             } else if (sectionId === 'appointments') {
-                fetch('_appointments.json')
-                .then(res => res.json())
-                .then(data => {
-                    appointments = data;
-                    renderAppointments();
-                });
+                renderAppointments();
             } else if (sectionId === 'donation-history') {
-                fetch('_blood-bank-history.json')
-                .then(res => res.json())
-                .then(data => {
-                    donationHistory = data;
-                    renderDonationHistory();
-                });
+                renderDonationHistory();
             } else if (sectionId === 'dashboard') {
                 updateDashboard();
             } else if (sectionId === 'update-inventory') {
@@ -124,14 +102,19 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
     
-    // Blood inventory functions
+    // Blood inventory
     function renderInventory() {
         const tableBody = document.querySelector('.inventory-table tbody');
         if (!tableBody) return;
         
         tableBody.innerHTML = '';
         
-        if (bloodInventory.length === 0) {
+        const row = document.createElement('tr');
+        row.innerHTML = `<td colspan="4" class="no-results">not implemented yet</td>`;
+        tableBody.appendChild(row);
+        return;
+
+        /* if (bloodInventory.length === 0) {
             const row = document.createElement('tr');
             row.innerHTML = `<td colspan="4" class="no-results">No blood inventory records found</td>`;
             tableBody.appendChild(row);
@@ -152,11 +135,11 @@ document.addEventListener('DOMContentLoaded', function() {
             `;
             
             tableBody.appendChild(row);
-        });
+        }); */
     }
 
     // Blood type filter
-    const bloodTypeFilter = document.getElementById('blood-type-filter');
+    /* const bloodTypeFilter = document.getElementById('blood-type-filter');
     if (bloodTypeFilter) {
         bloodTypeFilter.addEventListener('change', function() {
             const selectedType = this.value;
@@ -194,12 +177,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         });
-    }
+    } */
     
-    // Inventory form submission
+    // Inventory Form Submission [For Later]
     const inventoryForm = document.getElementById('inventory-form');
     if (inventoryForm) {
-        inventoryForm.addEventListener('submit', function(e) {
+        /* inventoryForm.addEventListener('submit', function(e) {
             e.preventDefault();
             
             const bloodType = document.getElementById('blood-type').value;
@@ -257,21 +240,26 @@ document.addEventListener('DOMContentLoaded', function() {
             updateDashboard();
             this.reset();
             showToast('Inventory updated successfully!');
-        });
+        }); */
     }
 
     // Appointments functions
     function renderAppointments() {
+        const hospitalName = document.getElementById('hospital-name').innerHTML;
         const appointmentList = document.querySelector('.appointment-list');
         if (!appointmentList) return;
         
         appointmentList.innerHTML = '';
+        const noResults = document.createElement('div');
+        noResults.className = 'no-results';
 
         const statusFilter = document.getElementById('appointment-status')?.value || 'all';
         const bloodTypeFilter = document.getElementById('appointment-blood-type')?.value || 'all';
 
         if (appointments == null) {
-            appointmentList.innerHTML = '<p>No Requests Yet</p>';
+            noResults.textContent = 'No requests yet';
+            appointmentList.appendChild(noResults);
+            return;
         }
         
         const filteredAppointments = appointments.filter(appointment => {
@@ -281,12 +269,12 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         if (filteredAppointments === null) {
-            appointmentList.innerHTML = '<p>No Requests Yet</p>';
+            noResults.textContent = 'No requests yet';
+            appointmentList.appendChild(noResults);
+            return;
         }
 
         if (filteredAppointments.length === 0) {
-            const noResults = document.createElement('div');
-            noResults.className = 'no-results';
             noResults.textContent = 'No appointments found matching your criteria';
             appointmentList.appendChild(noResults);
             return;
@@ -298,6 +286,7 @@ document.addEventListener('DOMContentLoaded', function() {
             appointmentItem.dataset.donation_id = appointment.donation_id;
             appointmentItem.dataset.hospital_id = appointment.hospital_id;
             appointmentItem.dataset.donor_id = appointment.donor_id;
+            appointmentItem.dataset.donor_email = appointment.email;
             
             let actionsHTML = '';
             if (appointment.status === 'Pending') {
@@ -313,11 +302,6 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             
             const formattedDate = formatDate(appointment.date_of_donation);
-            
-            /* let unitsInfo = '';
-            if (appointment.status === 'Completed' && appointment.units) {
-                unitsInfo = `<p><strong>Units Collected:</strong> ${appointment.units}</p>`;
-            } */
 
             if (appointment.status != 'Completed') {
                 appointmentItem.innerHTML = `
@@ -326,7 +310,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         <p><strong>Blood Type:</strong> ${appointment.blood_type}</p>
                         <p><strong>${appointment.status === 'Pending' ? 'Requested' : 
                                     appointment.status === 'Approved' ? 'Scheduled' : 'Donation'} Date:</strong> ${formattedDate}</p>
+                        <p><strong>Preferred Time:</strong> ${appointment.preferred_time}</p>
                         <p><strong>Status:</strong> ${capitalizeFirstLetter(appointment.status)}</p>
+                        <p><strong>Additional Information:</strong> ${capitalizeFirstLetter(appointment.additional_info)}</p>
                     </div>
                     <div class="appointment-actions">
                         ${actionsHTML}
@@ -336,44 +322,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 appointmentList.appendChild(appointmentItem);
             }
 
-            declineBtn = document.querySelectorAll('.btn-reject');
-            declineBtn.forEach(button => {
-                button.onclick = function(e) {
-                    const modal = document.getElementById('confirmModal');
-                    const name = this.closest('.appointment-item').querySelector('h3').innerHTML;
-                    const id = this.closest('.appointment-item').dataset.donation_id;
+            if (appointmentList.innerHTML == '') {
+                noResults.textContent = 'No pending requests';
+                appointmentList.appendChild(noResults);
+                return;
+            }
 
-                    modal.innerHTML = `
-                        <div class="modal-content">
-                            <span class="close-modal">&times;</span>
-                            <h2>Confirm</h2>
-                            <div class="confirmation-message">
-                                <p>Cancel appointment for <b>${name}</b>?</p>
-                            </div>
-                            <div class="modal-actions">
-                                <form method="GET" action="_appointments.php">
-                                    <input type="text" name="donation_id" value="${id}" style="display: none;">
-                                    <button type="submit" name="decline" value="true">Confirm</button>
-                                    <button class="close-modal">Cancel</button>
-                                </form>
-                            </div>
-                        </div>
-                    `;
-
-                    modal.style.display = 'flex';
-
-                    modal.querySelectorAll('.close-modal').forEach(button => {
-                        button.onclick = function(e) {
-                            e.preventDefault();
-                            modal.style.display = 'none';
-                        }
-                    });
-                }
-            });
-
-            // Confirmation form
-            approveBtn = document.querySelectorAll('.btn-approve');
-            approveBtn.forEach(button => {
+            // Confirmation modals
+            acceptBtn = document.querySelectorAll('.btn-approve');
+            acceptBtn.forEach(button => {
                 button.onclick = function(e) {
                     e.preventDefault();
 
@@ -389,10 +346,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <p>Approve appointment for <b>${name}</b>?</p>
                             </div>
                             <div class="modal-actions">
-                                <form method="GET" action="_appointments.php">
+                                <form method="GET" action="_functions.php">
                                     <input type="number" name="donation_id" value="${id}" style="display: none;">
-                                    <button type="submit" name="approve" value="true">Confirm</button>
-                                    <button class="close-modal">Cancel</button>
+                                    <button type="submit" name="approveAppointment" value="true">Confirm</button>
                                 </form>
                             </div>
                         </div>
@@ -400,12 +356,45 @@ document.addEventListener('DOMContentLoaded', function() {
 
                     modal.style.display = 'flex';
 
-                    modal.querySelectorAll('.close-modal').forEach(button => {
-                        button.onclick = function(e) {
-                            e.preventDefault();
-                            modal.style.display = 'none';
-                        }
-                    });
+                    modal.querySelector('.close-modal').onclick = function(e) {
+                        e.preventDefault();
+                        modal.style.display = 'none';
+                    }
+                }
+            });
+
+            declineBtn = document.querySelectorAll('.btn-reject');
+            declineBtn.forEach(button => {
+                button.onclick = function(e) {
+                    const modal = document.getElementById('confirmModal');
+                    const name = this.closest('.appointment-item').querySelector('h3').innerHTML;
+                    const id = this.closest('.appointment-item').dataset.donation_id;
+                    const email = this.closest('.appointment-item').dataset.donor_email;
+
+                    modal.innerHTML = `
+                        <div class="modal-content">
+                            <span class="close-modal">&times;</span>
+                            <h2>Confirm</h2>
+                            <div class="confirmation-message">
+                                <p>Cancel appointment for <b>${name}</b>?</p>
+                            </div>
+                            <div class="modal-actions">
+                                <form method="GET" action="_functions.php">
+                                    <input type="text" name="name" value="${hospitalName}" style="display: none;">
+                                    <input type="text" name="email" value="${email}" style="display: none;">
+                                    <input type="text" name="donation_id" value="${id}" style="display: none;">
+                                    <button type="submit" name="declineAppointment" value="true">Confirm</button>
+                                </form>
+                            </div>
+                        </div>
+                    `;
+
+                    modal.style.display = 'flex';
+
+                    modal.querySelector('.close-modal').onclick = function(e) {
+                        e.preventDefault();
+                        modal.style.display = 'none';
+                    }
                 }
             });
 
@@ -427,7 +416,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <p>Fill in the details of the donation</p>
                             </div>
                             <div class="modal-actions">
-                                <form method="POST" action="_appointments.php">
+                                <form method="POST" action="_functions.php">
                                     <input type="text" name="donation_id" value="${donation_id}" style="display: none;">
                                     <input type="text" name="hospital_id" value="${hospital_id}" style="display: none;">
                                     <input type="text" name="donor_id" value="${donor_id}" style="display: none;">
@@ -437,9 +426,9 @@ document.addEventListener('DOMContentLoaded', function() {
                                     <input type="number" name="units" value="1" min="1" required>
                                     <p>Blood Form Factor:</p>
                                     <select name="blood_component" required>
-                                        <option value="whole">Whole Blood</option>
+                                        <option value="Whole Blood" selected>Whole Blood</option>
                                     </select>
-                                    <button type="submit" name="complete">Test</button>
+                                    <button type="submit" name="finalizeAppointment">Submit</button>
                                 </form>
                             </div>
                         </div>
@@ -453,15 +442,45 @@ document.addEventListener('DOMContentLoaded', function() {
                     }
                 }
             });
-        });
-        
-        /* appointmentList.querySelectorAll('button').forEach(button => {
-            button.addEventListener('click', handleAppointmentAction);
-        }); */
-    }
-        
-        
 
+            cancelBtn = document.querySelectorAll('.btn-cancel');
+            cancelBtn.forEach(button => {
+                button.onclick = function(e) {
+                    e.preventDefault();
+
+                    const modal = document.getElementById('confirmModal');
+                    const name = this.closest('.appointment-item').querySelector('h3').innerHTML;
+                    const id = this.closest('.appointment-item').dataset.donation_id;
+                    const email = this.closest('.appointment-item').dataset.donor_email;
+
+                    modal.innerHTML = `
+                        <div class="modal-content">
+                            <span class="close-modal">&times;</span>
+                            <h2>Confirm</h2>
+                            <div class="confirmation-message">
+                                <p>Cancel appointment for <b>${name}</b>?</p>
+                            </div>
+                            <div class="modal-actions">
+                                <form method="GET" action="_functions.php">
+                                    <input type="text" name="name" value="${hospitalName}" style="display: none;">
+                                    <input type="text" name="email" value="${email}" style="display: none;">
+                                    <input type="number" name="donation_id" value="${id}" style="display: none;">
+                                    <button type="submit" name="cancelAppointmentBB" value="true">Confirm</button>
+                                </form>
+                            </div>
+                        </div>
+                    `;
+
+                    modal.style.display = 'flex';
+
+                    modal.querySelector('.close-modal').onclick = (e) => {
+                        e.preventDefault();
+                        modal.style.display = 'none';
+                    }
+                }
+            });
+        });
+    }
     
     // Appointment filters
     const appointmentStatusFilter = document.getElementById('appointment-status');
@@ -473,82 +492,6 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (appointmentBloodTypeFilter) {
         appointmentBloodTypeFilter.addEventListener('change', renderAppointments);
-    }
-    
-    // Handle appointment actions
-    /* function handleAppointmentAction(e) {
-        const appointmentId = parseInt(this.getAttribute('data-id'));
-        const appointmentIndex = appointments.findIndex(a => a.id === appointmentId);
-        
-        if (appointmentIndex === -1) return;
-        
-        const action = this.classList.contains('btn-approve') ? 'approved' :
-                      this.classList.contains('btn-reject') ? 'rejected' :
-                      this.classList.contains('btn-complete') ? 'completed' : 'cancelled';
-                      
-        if (action === 'Approved') {
-            e.preventDefault();
-            alert('Approved');
-        }
-
-        if (action === 'completed') {
-            e.preventDefault();
-            alert('test');
-            const appointment = appointments[appointmentIndex];
-            const collectedUnits = 1;
-            
-            appointments[appointmentIndex].status = 'completed';
-            appointments[appointmentIndex].units = collectedUnits;
-            
-            donationHistory.unshift({
-                name: appointment.name,
-                bloodType: appointment.bloodType,
-                date: new Date().toISOString().split('T')[0],
-                units: collectedUnits,
-                status: 'Processed'
-            });
-            
-            updateInventoryFromDonation(appointment.bloodType, collectedUnits);
-            
-        } else if (action === 'cancelled' || action === 'rejected') {
-            appointments.splice(appointmentIndex, 1);
-        } else {
-            appointments[appointmentIndex].status = action;
-        }
-        
-        renderAppointments();
-        updateDashboard();
-        renderDonationHistory();
-        showToast(`Appointment ${capitalizeFirstLetter(action)}!`, action === 'rejected' || action === 'cancelled' ? 'error' : 'success');
-    } */
-    
-    // Update inventory from donation
-    function updateInventoryFromDonation(bloodType, units) {
-        const inventoryIndex = bloodInventory.findIndex(item => item.type === bloodType);
-        
-        if (inventoryIndex !== -1) {
-            bloodInventory[inventoryIndex].units += units;
-            
-            if (bloodInventory[inventoryIndex].units > 15) {
-                bloodInventory[inventoryIndex].status = 'Good';
-            } else if (bloodInventory[inventoryIndex].units > 3) {
-                bloodInventory[inventoryIndex].status = 'Low';
-            }
-            
-        } else {
-            const today = new Date();
-            const expirationDate = new Date(today);
-            expirationDate.setDate(today.getDate() + 42); 
-            
-            bloodInventory.push({
-                type: bloodType,
-                units: units,
-                expiration: expirationDate.toISOString().split('T')[0],
-                status: units <= 3 ? 'Critical' : units <= 15 ? 'Low' : 'Good'
-            });
-        }
-        
-        renderInventory();
     }
     
     // Donation history functions
@@ -584,16 +527,41 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         filteredHistory.forEach(item => {
-            const row = document.createElement('tr');
-            row.innerHTML = `
-                <td>${item.donor_name}</td>
-                <td>${item.blood_type}</td>
-                <td>${formatDateTime(item.extraction_datetime)}</td>
-                <td>${item.component}</td>
-                <td>${item.units_collected}</td>
-            `;
-            tableBody.appendChild(row);
+            if (item.hidden != 1) {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${item.donor_name}</td>
+                    <td>${item.blood_type}</td>
+                    <td>${formatDateTime(item.extraction_datetime)}</td>
+                    <td>${item.component}</td>
+                    <td>${item.units_collected}</td>
+                    <td>
+                        <form method="GET" action="_functions.php">
+                            <input type="text" name="hide_history_id" value="${item.history_id}" style="display: none;">
+                            <button type="submit" class="delete-record"><i class="fas fa-trash"></i></button>
+                        </form>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            }
+
+            deleteBtn = document.querySelectorAll('.delete-record');
+            deleteBtn.forEach(button => {
+                button.onclick = function(e) {
+                    e.preventDefault();
+                    if (confirm("Delete donation record?") == true) {
+                        this.parentElement.submit();
+                    }
+                }
+            });
         });
+
+        if (tableBody.innerHTML === '') {
+            const row = document.createElement('tr');
+            row.innerHTML = `<td colspan="5" class="no-results">No donation records found</td>`;
+            tableBody.appendChild(row);
+            return;   
+        }
     }
 
     // Donation history filters
@@ -601,99 +569,16 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('history-blood-type')?.addEventListener('change', renderDonationHistory);
     document.getElementById('history-date')?.addEventListener('change', renderDonationHistory);
     
-    // Urgent requests functions
-    function setupUrgentRequests() {
-        const requestContainer = document.querySelector('.content-box:first-of-type');
-        if (!requestContainer) return;
-        
-        const existingRequests = requestContainer.querySelectorAll('.request-item');
-        existingRequests.forEach(request => request.remove());
-        
-        const pendingRequests = urgentRequests.filter(request => request.status === 'Pending');
-        
-        if (pendingRequests.length === 0) {
-            const noResults = document.createElement('div');
-            noResults.className = 'no-results';
-            noResults.textContent = 'No pending urgent requests';
-            requestContainer.appendChild(noResults);
-            return;
-        }
-        
-        pendingRequests.forEach(request => {
-            const requestItem = document.createElement('div');
-            requestItem.className = `request-item ${request.title.includes('Emergency') ? 'urgent' : ''}`;
-            requestItem.dataset.id = request.id;
-            
-            requestItem.innerHTML = `
-                <h3>${request.title}</h3>
-                <p>Needed by: ${formatDate(request.needed)}</p>
-                <p>Quantity: ${request.quantity} units</p>
-                <div class="request-actions">
-                    <button class="btn-accept" data-id="${request.id}">Accept</button>
-                    <button class="btn-decline" data-id="${request.id}">Decline</button>
-                </div>
-            `;
-            
-            requestContainer.appendChild(requestItem);
-        });
-        
-        requestContainer.querySelectorAll('.btn-accept, .btn-decline').forEach(button => {
-            button.addEventListener('click', handleRequestAction);
-        });
-    }
-    
-    // Handle request actions
-    function handleRequestAction() {
-        const requestId = parseInt(this.getAttribute('data-id'));
-        const isAccept = this.classList.contains('btn-accept');
-        const requestIndex = urgentRequests.findIndex(r => r.id === requestId);
-        
-        if (requestIndex === -1) return;
-        
-        urgentRequests[requestIndex].status = isAccept ? 'accepted' : 'declined';
-        
-        if (isAccept) {
-            const request = urgentRequests[requestIndex];
-            const bloodType = request.title.split('Type ')[1];
-            
-            const inventoryIndex = bloodInventory.findIndex(item => item.type === bloodType);
-            if (inventoryIndex !== -1) {
-                bloodInventory[inventoryIndex].units -= request.quantity;
-                
-                if (bloodInventory[inventoryIndex].units <= 0) {
-                    bloodInventory[inventoryIndex].units = 0;
-                    bloodInventory[inventoryIndex].status = 'Critical';
-                } else if (bloodInventory[inventoryIndex].units <= 3) {
-                    bloodInventory[inventoryIndex].status = 'Critical';
-                } else if (bloodInventory[inventoryIndex].units <= 15) {
-                    bloodInventory[inventoryIndex].status = 'Low';
-                }
-            }
-        }
-        
-        const requestItem = this.closest('.request-item');
-        if (requestItem) {
-            requestItem.remove();
-        }
-        
-        const requestContainer = document.querySelector('.content-box:first-of-type');
-        const remainingRequests = requestContainer.querySelectorAll('.request-item');
-        if (remainingRequests.length === 0) {
-            const noResults = document.createElement('div');
-            noResults.className = 'no-results';
-            noResults.textContent = 'No pending urgent requests';
-            requestContainer.appendChild(noResults);
-        }
-        
-        updateDashboard();
-        showToast(`Request ${isAccept ? 'accepted' : 'declined'}`, isAccept ? 'success' : 'error');
-    }
-    
     // Dashboard functions
     function updateDashboard() {
         const totalUnits = bloodInventory.reduce((sum, item) => sum + item.units, 0);
         const criticalTypes = bloodInventory.filter(item => item.status === 'Critical');
-        const pendingAppointments = appointments.filter(a => a.status === 'Pending' || a.status === 'Approved');
+
+        let pendingAppointments = [];
+
+        if (appointments != null) {
+            pendingAppointments = appointments.filter(a => a.status === 'Pending' || a.status === 'Approved');
+        }
         
         document.querySelectorAll('.stat-card').forEach(card => {
             const title = card.querySelector('h3').textContent;
@@ -702,10 +587,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 card.querySelector('.stat-value').textContent = `${totalUnits} units`;
             } else if (title === 'Critical Levels') {
                 card.querySelector('.stat-value').textContent = `${criticalTypes.length} types`;
-                card.querySelector('.stat-info').textContent = criticalTypes.map(item => item.type).join(', ') || 'None';
+                card.querySelector('.stat-info').textContent = `not implemented yet`;/* criticalTypes.map(item => item.type).join(', ') || 'None'; */
             } else if (title === 'Pending Appointments') {
                 card.querySelector('.stat-value').textContent = pendingAppointments.length.toString();
-                card.querySelector('.stat-info').textContent = `${urgentRequests.filter(r => r.status === 'Pending').length} urgent requests`;
+                card.querySelector('.stat-info').textContent = `${urgentRequests.filter(r => r.status === 'Pending').length} pending requests`;
             }
         });
         
@@ -713,69 +598,87 @@ document.addEventListener('DOMContentLoaded', function() {
         if (recentDonationsContainer) {
             const existingDonations = recentDonationsContainer.querySelectorAll('.donation-item, .no-results');
             existingDonations.forEach(donation => donation.remove());
+
+            const filteredDonationHistory = donationHistory.filter(a => a.hidden === '0');
             
-            if (donationHistory.length === 0) {
+            if (donationHistory == null || filteredDonationHistory.length == 0) {
                 const noResults = document.createElement('div');
                 noResults.className = 'no-results';
-                noResults.textContent = 'No recent donations';
+                noResults.textContent = 'no recent donations';
                 recentDonationsContainer.appendChild(noResults);
-                return;
             }
             
             const recentDonations = donationHistory.slice(0, 2);
             
+            var count = 0;
+
             recentDonations.forEach(donation => {
-                const donationItem = document.createElement('div');
-                donationItem.className = 'donation-item';
-                
-                donationItem.innerHTML = `
-                    <h3>${donation.name}</h3>
-                    <p>Type: ${donation.bloodType}</p>
-                    <p>Date: ${formatDate(donation.date)}</p>
-                    <p>Quantity: ${donation.units} unit</p>
-                `;
-                
-                recentDonationsContainer.appendChild(donationItem);
+                if (count < 1) {
+                    if (donation.hidden != 1) {
+                        const donationItem = document.createElement('div');
+                        donationItem.className = 'donation-item';
+                        
+                        donationItem.innerHTML = `
+                            <h3>${donation.donor_name}</h3>
+                            <p>Type: ${donation.blood_type}</p>
+                            <p>Date: ${formatDateTime(donation.extraction_datetime)}</p>
+                            <p>Component Extracted: ${donation.component}</p>
+                            <p>Quantity: ${donation.units_collected} unit(s)</p>
+                        `;
+                        
+                        recentDonationsContainer.appendChild(donationItem);
+                        count++;
+                    }
+                }
             });
         }
     }
     
     // Logout functionality
     const logoutBtn = document.getElementById('logout-btn');
-    logoutBtn.addEventListener('click', function(e) {
+    const logoutModal = document.getElementById('logoutModal');
+    const confirmLogout = document.getElementById('confirmLogout');
+    const cancelLogout = document.getElementById('cancelLogout');
+    const closeModal = document.querySelector('.close-modal');
+
+    if (logoutBtn && logoutModal) {
+
+        logoutBtn.addEventListener('click', function(e) {
         e.preventDefault();
-        if (confirm('Are you sure you want to logout?')) {
-            window.location.href = "_logout.php";
-        }
-    }); // Refactored
-    
-    // Helper functions
-    /* function showToast(message, type = 'success') {
-        let toastContainer = document.querySelector('.toast-container');
-        if (!toastContainer) {
-            toastContainer = document.createElement('div');
-            toastContainer.className = 'toast-container';
-            document.body.appendChild(toastContainer);
+        logoutModal.style.display = 'flex';
+        });
+
+        if (confirmLogout) {
+            confirmLogout.addEventListener('click', function() {
+                logoutModal.style.display = 'none';
+                this.parentElement.submit();
+            });
         }
 
-        const toast = document.createElement('div');
-        toast.className = `toast ${type}`;
-        toast.textContent = message;
-        toastContainer.appendChild(toast);
+        if (cancelLogout) {
+            cancelLogout.addEventListener('click', function() {
+                logoutModal.style.display = 'none';
+            });
+        }
 
-        setTimeout(() => {
-            toast.style.opacity = '1';
-            toast.style.transform = 'translateY(0)';
-        }, 10);
+        if (closeModal) {
+            closeModal.addEventListener('click', function() {
+                logoutModal.style.display = 'none';
+            });
+        }
 
-        setTimeout(() => {
-            toast.style.opacity = '0';
-            toast.style.transform = 'translateY(20px)';
-            setTimeout(() => {
-                toastContainer.removeChild(toast);
-            }, 300);
-        }, 3000);
-    } */
+        logoutModal.addEventListener('click', function(e) {
+            if (e.target === logoutModal) {
+                logoutModal.style.display = 'none';
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && logoutModal.style.display === 'flex') {
+                logoutModal.style.display = 'none';
+            }
+        });
+    }
     
     function formatDate(dateString) {
         if (!dateString) return 'N/A';
@@ -800,8 +703,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Initialize the dashboard
-    updateDashboard();
-    setupUrgentRequests();
+    // setupUrgentRequests();
     renderInventory();
     renderAppointments();
     renderDonationHistory();

@@ -4,26 +4,24 @@ $conn = connect();
 
 date_default_timezone_set('Asia/Manila');
 
-if(isset($_GET['cancel'])) {
+if (isset($_GET['decline'])) {
     $sql =
-        "UPDATE donation_appointments
-        SET status='Cancelled'
+        "DELETE FROM donation_appointments
         WHERE donation_id='$_GET[donation_id]'";
-
-    $rs = $conn->query($sql);
-
-    header('Location: donor-db.php');
-}
-
-if(isset($_GET['approve'])) {
-    $sql = "UPDATE donation_appointments
-    SET status='Approved'
-    WHERE donation_id='$_GET[donation_id]'";
-
     $rs = $conn->query($sql);
 
     header('Location: hospital-db.php');
 }
+
+if(isset($_GET['cancel'])) {
+    $sql =
+        "DELETE FROM donation_appointments
+        WHERE donation_id='$_GET[donation_id]'";
+    $rs = $conn->query($sql);
+
+    header('Location: hospital-db.php');
+}
+
 
 if(isset($_GET['complete'])) {
     $id = $_GET['donation_id'];

@@ -92,7 +92,7 @@ if(isset($_POST['submit_request'])) {
 
     echo "
     <script>
-        alert('The selected donor has been notified of your request via email.');
+        alert('The selected donor has been notified of your request via email. Please contact the donor via their phone number for urgent requests.');
         window.location.href = 'donors.php';
     </script>";
 }
@@ -102,32 +102,88 @@ if(isset($_POST['submit_request'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Request Donor</title>
+    <title>LifeLink</title>
+    <link rel="stylesheet" href="request-donor.css">
     <link rel="icon" href="resources/heartbeat-solid.svg">
 </head>
 <body>
 
-    <h1>
-        Request Donor
-    </h1>
-    <form method="POST" autocomplete="off">
-        Name: <br><input type="text" name="rq_name" placeholder="Enter your name..." required><br>
-        Contact Number: <br><input type="text" name="rq_number" placeholder="09xxxxxxxxx" required><br>
-        Contact Email: <br><input type="text" name="rq_email" placeholder="Enter your contact number..." required><br>
-        Date Needed: <br><input type="date" name="date" required><br>
-        Request Description:
-        <br><textarea name="rq_desc" placeholder="Briefly describe your request..."></textarea><br>
-        <input type="checkbox" name="urgent" value="1">Mark as URGENT <br>
-        Select affiliated healthcare institution (leave blank if none):
-        <br><select name="rq_loc">
-            <option value="" selected></option>
-            <?php getHospitalList(); ?>
-        </select><br>
-        Point of donation
-        <br><input type="text" name="point_of_donation" placeholder="Where should the donor go to donate?" required><br>
-        <button type="submit" name="submit_request">Submit Request</button>
-    </form>
-    <a href="donors.php">Return to donors</a>
+    <div class="header">
+        <div class="header-content">
+            <i class="fas fa-envelope-medical"></i>
+            <h1>Request Donor</h1>
+        </div>
+    </div>
+
     
+    <form method="POST" autocomplete="off">
+        <div class="form-field">
+            <label for="rq_name">
+                <i class="fas fa-user"></i>
+                Name:
+            </label>
+            <input type="text" name="rq_name" id="rq_name" placeholder="Enter your name..." required>
+        </div>
+
+        <div class="form-field">
+            <label for="rq_number">
+                <i class="fas fa-phone"></i>
+                Contact Number:
+            </label>
+            <input type="text" name="rq_number" id="rq_number" placeholder="Enter your phone number..." required>
+        </div>
+
+        <div class="form-field">
+            <label for="rq_email">
+                <i class="fas fa-envelope"></i>
+                Contact Email:
+            </label>
+            <input type="email" name="rq_email" id="rq_email" placeholder="Enter your email address..." required>
+        </div>
+
+        <div class="form-field">
+            <label for="date">
+                <i class="fas fa-calendar-alt"></i>
+                Date Needed:
+            </label>
+            <input type="date" name="date" id="date" required>
+        </div>
+
+        <div class="form-field">
+            <label for="rq_desc">
+                <i class="fas fa-comment-medical"></i>
+                Request Description:
+            </label>
+            <textarea name="rq_desc" id="rq_desc" placeholder="Briefly describe your request..."></textarea>
+        </div>
+
+        <div class="form-field">
+            <label for="rq_loc">
+                <i class="fas fa-hospital"></i>
+                Select Affiliated Healthcare Institution (Leave Blank if None):
+            </label>
+            <select name="rq_loc" id="rq_loc">
+                <option value="" selected></option>
+                <?php getHospitalList(); ?>
+            </select>
+        </div>
+
+        <div class="form-field">
+            <label for="point_of_donation">
+                <i class="fas fa-map-marker-alt"></i>
+                Point of Donation:
+            </label>
+            <input type="text" name="point_of_donation" id="point_of_donation" placeholder="Where should the donor go to donate?" required>
+        </div>
+
+        <div class="checkbox-container">
+            <input type="checkbox" name="urgent" id="urgent" value="1">
+            <label for="urgent">Mark as URGENT</label>
+        </div>
+
+        <button type="submit" name="submit_request">Submit Request</button>
+        <a href="donors.php">Return to donors</a>
+    </form>
+
 </body>
 </html>

@@ -5,11 +5,16 @@ $conn = connect();
 updateAvailablity();
 getDonorInfoJSON();
 
-if(!isset($_POST['filter'])) {
-    $search = '';
+$current_session = '';
+if (isset($_SESSION['donor_email'])) {
+    $current_session = $_SESSION['donor_email'];
 }
-else {
+checkLoggedIn($current_session);
+
+if (isset($_POST['filter'])) {
     $search = $_POST['blood_type'];
+} else {
+    $search = '';
 }
 
 // Login
@@ -103,15 +108,17 @@ if(isset($_POST['signup'])) {
             </ul>
         </div>
     </header>
+
+    <p id="bloodTypeFilterValue"><?php echo $search?></p>
     
     <div class="container">
         <div class="search-container">
             <div class="search-bar">
-                <input type="text" id="searchInput" placeholder="Search donors by a keyword in name, location, or blood type..." value="<?php echo $search?>">
+                <input type="text" id="searchInput" placeholder="Search donors by a keyword in name, location, or blood type...">
                 <button class="filter-btn" id="clearBtn"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="filter-options" id="filterOptions">
-                <button class="filter-btn active" data-filter="all">All</button>
+                <button class="filter-btn" data-filter="all">All</button>
                 <button class="filter-btn" data-filter="A+">A+</button>
                 <button class="filter-btn" data-filter="A-">A-</button>
                 <button class="filter-btn" data-filter="B+">B+</button>
@@ -128,6 +135,7 @@ if(isset($_POST['signup'])) {
         </div>
     </div>
 
+            <!-- Login Section -->
             <section id="donor">
 
                 <div class="blur-bg-overlay"></div>

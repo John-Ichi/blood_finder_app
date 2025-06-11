@@ -1,80 +1,94 @@
 document.addEventListener('DOMContentLoaded', function() {
 
+    const logoutModal = document.getElementById('logoutModal');
+    const appointmentDetailsModal = document.getElementById('appointmentDetailsModal');
+    document.addEventListener('keydown', function(e) { // Close modal escape key
+        if (e.key === 'Escape' && (logoutModal.style.display === 'flex' || appointmentDetailsModal.style.display === 'flex')) {
+            logoutModal.style.display = 'none';
+            appointmentDetailsModal.style.display = 'none';
+        }
+    });
+
     // Check if logged in AJAX request
-function checkLogin() {
-    const xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-        if(this.readyState == 4 && this.status == 200) {
-            if(this.responseText.trim() === 'loggedIn') {
-                window.location.href = "donor-db.php";
+    function checkLogin() {
+        const xhttp = new XMLHttpRequest();
+        xhttp.onreadystatechange = function() {
+            if(this.readyState == 4 && this.status == 200) {
+                if(this.responseText.trim() === 'loggedIn') {
+                    window.location.href = "donor-db.php";
+                }
+                else {
+                    showLoginForm();
+                    showPopup();
+                }
+            }    
+        };
+        xhttp.open("GET", "_check-login.php", true);
+        xhttp.send();
+    }
+
+    // Burger JS
+    const hamMenu = document.querySelector('.ham-menu');
+    const offScreenMenu = document.querySelector('.off-screen-menu');
+    const body = document.body;
+
+    // Close burger
+    if (hamMenu && offScreenMenu) {
+        hamMenu.addEventListener('click', function() {
+            hamMenu.classList.toggle('active');
+            offScreenMenu.classList.toggle('active');
+            // body.classList.toggle('menu-open');
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!hamMenu.contains(e.target) && !offScreenMenu.contains(e.target) && offScreenMenu.classList.contains('active')) {
+                hamMenu.classList.remove('active');
+                offScreenMenu.classList.remove('active');
             }
-            else {
-                showLoginForm();
-                showPopup();
+        });
+    
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && offScreenMenu.classList.contains('active')) {
+                hamMenu.classList.remove('active');
+                offScreenMenu.classList.remove('active');
             }
-        }    
-    };
-    xhttp.open("GET", "_check-login.php", true);
-    xhttp.send();
-}
+        });
+    } else {
+        console.error('Hamburger menu or off-screen menu elements not found');
+    }
 
-// Burger JS
-const hamMenu = document.querySelector('.ham-menu');
-const offScreenMenu = document.querySelector('.off-screen-menu');
-const body = document.body;
 
-// Close burger
-if (hamMenu && offScreenMenu) {
-    hamMenu.addEventListener('click', function() {
-        hamMenu.classList.toggle('active');
-        offScreenMenu.classList.toggle('active');
-        // body.classList.toggle('menu-open');
-    });
 
-    document.addEventListener('click', function(e) {
-        if (!hamMenu.contains(e.target) && !offScreenMenu.contains(e.target) && offScreenMenu.classList.contains('active')) {
+    // Add event listener sa burger
+    const menuItems = document.querySelectorAll('.off-screen-menu ul li');
+    menuItems.forEach(item => {
+        item.addEventListener('click', function() {
             hamMenu.classList.remove('active');
             offScreenMenu.classList.remove('active');
-        }
-    });
- 
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape' && offScreenMenu.classList.contains('active')) {
-            hamMenu.classList.remove('active');
-            offScreenMenu.classList.remove('active');
-        }
-    });
-} else {
-    console.error('Hamburger menu or off-screen menu elements not found');
-}
-
-// Add event listener sa burger
-const menuItems = document.querySelectorAll('.off-screen-menu ul li');
-menuItems.forEach(item => {
-    item.addEventListener('click', function() {
-        hamMenu.classList.remove('active');
-        offScreenMenu.classList.remove('active');
-        body.classList.remove('menu-open');
-        const menuText = this.textContent.trim().toLowerCase();
-            
-        // Show home if home
-        if (menuText === 'home') {
-            if (window.location.href === "http://localhost/lifelink/home.php") {
-                return;
-            } else {
-                window.location.href = "home.php";
+            body.classList.remove('menu-open');
+            const menuText = this.textContent.trim().toLowerCase();
+                
+            // Show home if home
+            if (menuText === 'home') {
+                if (window.location.href === "http://localhost/lifelink/home.php") {
+                    return;
+                } else {
+                    window.location.href = "home.php";
+                }
+            } else if (menuText === 'login') { // Check login para deretso sa dashboard if may session
+                checkLogin(); // Show login if login
+            } else if (menuText === 'logout') {
+                // Initialize logout modal
+                logoutModal.style.display = 'flex';
+            } else if (menuText === 'about us') {
+                alert("Ceejay Cervantes, Allen Dinglas, John Ichiro Mananquil");
+            } else if (menuText === 'contact') {
+                alert("Insert LifeLink Team Contact");
             }
-        } else if (menuText === 'login') { // Check login para deretso sa dashboard if may session
-            checkLogin(); // Show login if login
-        } else if (menuText === 'about us') {
-            alert("Ceejay Cervantes, Allen Dinglas, John Ichiro Mananquil");
-        } else if (menuText === 'contact') {
-            alert("Insert LifeLink Team Contact");
-        }
+        });
     });
-});
 
-// End of Burger JS
+    // End of Burger JS
 
     // DOM element selectors
     const navLinks = document.querySelectorAll('.sidebar-links a, [data-page]');
@@ -82,12 +96,12 @@ menuItems.forEach(item => {
     const requestsLink = document.querySelector('[data-page="requests"]');
     
     // Notification system
-    let unreadRequests = 3;
+    /* let unreadRequests = 3;
     
     // Initialize badge if needed
     if (unreadRequests > 0) {
         addNotificationBadge(requestsLink, unreadRequests);
-    }
+    } */
     
     // Navigation functionality
     initializeNavigation();
@@ -104,11 +118,6 @@ menuItems.forEach(item => {
     // Initialize request actions
     initializeRequestActions();
     
-    
-
-    // Initialize forms
-    initializeForms();
-    
     // Initialize filters
     initializeFilters();
     
@@ -119,16 +128,13 @@ menuItems.forEach(item => {
     initializeDonationDetails();
     
     // Initialize donation history
-    initializeDonationHistory();
-    
-    // Start request simulation
-    startRequestSimulation();
+    // initializeDonationHistory();
 
     showAppointmentDetails();
     
     // HELPER FUNCTIONS
 
-    function addNotificationBadge(element, count) {
+    /* function addNotificationBadge(element, count) {
         let badge = element.querySelector('.sidebar-notification-badge');
         
         if (count > 0) {
@@ -141,7 +147,7 @@ menuItems.forEach(item => {
         } else if (badge) {
             badge.remove();
         }
-    }
+    } */
     
     function showPage(pageId) {
         // Hide all pages and deactivate nav links
@@ -160,10 +166,10 @@ menuItems.forEach(item => {
         });
         
         // Reset requests notifications when visiting requests page
-        if (pageId === 'requests') {
+        /* if (pageId === 'requests') {
             unreadRequests = 0;
             addNotificationBadge(requestsLink, unreadRequests);
-        }
+        } */
     }
     
     function initializeNavigation() {
@@ -248,7 +254,6 @@ menuItems.forEach(item => {
     function showAppointmentDetails() {
         const showBtn = document.querySelector('.view-appointment-details');
         showBtn.addEventListener('click', function() {
-            let appointmentDetailsModal = document.getElementById('appointmentDetailsModal');
             appointmentDetailsModal.style.display = 'flex';
         });
     }
@@ -277,25 +282,17 @@ menuItems.forEach(item => {
         
         // Initialize logout modal
         const logoutBtn = document.getElementById('logoutBtn');
-        const logoutModal = document.getElementById('logoutModal');
         
         if (logoutBtn && logoutModal) {
-            const confirmLogout = document.getElementById('confirmLogout');
             const cancelLogout = document.getElementById('cancelLogout');
             
             logoutBtn.addEventListener('click', function() {
                 logoutModal.style.display = 'flex';
             });
             
-            if (confirmLogout) {
-                confirmLogout.addEventListener('click', function() {
-                    logoutModal.style.display = 'none';
-                    window.location.href = '_logout.php';
-                });
-            }
-            
             if (cancelLogout) {
-                cancelLogout.addEventListener('click', function() {
+                cancelLogout.addEventListener('click', function(e) {
+                    e.preventDefault();
                     logoutModal.style.display = 'none';
                 });
             }
@@ -352,126 +349,6 @@ menuItems.forEach(item => {
                 } else e.preventDefault();
             }
         });
-
-        /* const archiveButtons = document.querySelectorAll('.archive-request');
-        archiveButtons.forEach(button => {
-            button.onclick = function(e) {
-                let archiveForm = this.parentElement;
-                if (confirm("Hide request?") == true) {
-                    archiveForm.submit();
-                } else e.preventDefault();
-            }
-        }) */
-       
-        /* const acceptButtons = document.querySelectorAll('.accept-request');
-        acceptButtons.forEach(button => {
-            button.addEventListener('click', function() {
-                const requestItem = this.closest('.request-item');
-                
-                this.textContent = 'Accepted';
-                this.classList.remove('btn-primary');
-                this.classList.add('btn-outline');
-                this.disabled = true;
-            });
-        }); */
-        
-        /* const confirmAccept = document.getElementById('confirmAccept');
-        if (confirmAccept) {
-            confirmAccept.addEventListener('click', function() {
-                const requestModal = document.getElementById('requestModal');
-                requestModal.style.display = 'none';
-                
-                const currentRequestTitle = requestModal.querySelector('h2').textContent;
-                document.querySelectorAll('.request-item h3').forEach(item => {
-                    if (item.textContent === currentRequestTitle) {
-                        const acceptBtn = item.closest('.request-item').querySelector('.accept-request');
-                        if (acceptBtn) {
-                            acceptBtn.textContent = 'Accepted';
-                            acceptBtn.classList.remove('btn-primary');
-                            acceptBtn.classList.add('btn-outline');
-                            acceptBtn.disabled = true;
-                        }
-                    }
-                });
-            });
-        } */
-        
-        /* const saveForLater = document.getElementById('saveForLater');
-        if (saveForLater) {
-            saveForLater.addEventListener('click', function() {
-                document.getElementById('requestModal').style.display = 'none';
-            });
-        } */
-    }
-    
-    function initializeForms() {
-        /* const donationForm = document.getElementById('donationForm');
-        if (donationForm) {
-            donationForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const date = this.querySelector('#donationDate').value;
-                const center = this.querySelector('#donationCenter').value;
-                const bloodType = this.querySelector('#bloodType').value;
-                
-                const formattedDate = new Date(date).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric'
-                });
-                
-                const centerName = document.querySelector(`#donationCenter option[value="${center}"]`).textContent;
-                            
-                const historyList = document.querySelector('#profile-page .card .request-list');
-                if (historyList) {
-                    const newDonation = document.createElement('li');
-                    newDonation.className = 'request-item';
-                    newDonation.innerHTML = `
-                        <div class="request-info">
-                            <h3>${formattedDate}</h3>
-                            <p><i class="fas fa-map-marker-alt"></i> ${centerName}</p>
-                            <p><i class="fas fa-tint"></i> ${bloodType} Blood Type</p>
-                            <p><i class="fas fa-calendar-check"></i> Surgery: Scheduled Donation</p>
-                            <p><i class="fas fa-check-circle"></i> Scheduled</p>
-                        </div>
-                        <div class="request-actions">
-                            <button class="btn btn-outline btn-sm view-details">Details</button>
-                        </div>
-                    `;
-                    
-                    // Insert at the top of the list
-                    if (historyList.firstChild) {
-                        historyList.insertBefore(newDonation, historyList.firstChild);
-                    } else {
-                        historyList.appendChild(newDonation);
-                    }
-                    
-                    // Show a success message
-                    showToast('Donation scheduled successfully!');
-                }
-                
-                this.reset();
-                showPage('home');
-            });
-        }
-        
-        /* const profileForm = document.getElementById('profileForm');
-        if (profileForm) {
-            profileForm.addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const name = this.querySelector('#fullName').value;
-                const bloodType = this.querySelector('#bloodTypeProfile').value;
-                
-                const profileName = document.querySelector('.user-profile h3');
-                const profileBloodType = document.querySelector('.user-profile p');
-                
-                if (profileName) profileName.textContent = name;
-                if (profileBloodType) profileBloodType.textContent = bloodType + ' Blood Type';
-                
-                showToast('Profile updated successfully!');
-            });
-        } */
     }
     
     function initializeFilters() {
@@ -652,7 +529,8 @@ menuItems.forEach(item => {
         }
     }
     
-    function initializeDonationHistory() {
+    // For later
+    /* function initializeDonationHistory() {
         const viewFullHistoryBtn = document.getElementById('viewFullHistory');
         const fullHistoryModal = document.getElementById('fullHistoryModal');
     
@@ -686,50 +564,5 @@ menuItems.forEach(item => {
                 }
             });
         }
-    }
-    
-    function startRequestSimulation() {
-        let simulateNewRequestInterval;
-        
-        if (simulateNewRequestInterval) {
-            clearInterval(simulateNewRequestInterval);
-        }
-        
-        simulateNewRequestInterval = setInterval(() => {
-            const requestsPage = document.querySelector('#requests-page');
-            if (!requestsPage.classList.contains('active')) {
-                unreadRequests++;
-                addNotificationBadge(requestsLink, unreadRequests);
-                
-                showToast('New blood request received!');
-            }
-        }, 60000); // Every minute
-    }
-    
-    /* function showToast(message, type = 'success') {
-        const toast = document.createElement('div');
-        toast.className = `toast ${type}`;
-        toast.textContent = message;
-        document.body.appendChild(toast);
-        
-        // Set toast style based on type
-        if (type === 'success') {
-            toast.style.backgroundColor = 'var(--accent)';
-        } else if (type === 'error') {
-            toast.style.backgroundColor = 'var(--primary)';
-        } else if (type === 'info') {
-            toast.style.backgroundColor = 'var(--dark)';
-        }
-        
-        // Animation sequence
-        setTimeout(() => {
-            toast.classList.add('show');
-            setTimeout(() => {
-                toast.classList.remove('show');
-                setTimeout(() => {
-                    toast.remove();
-                }, 300);
-            }, 3000);
-        }, 100);
     } */
 });

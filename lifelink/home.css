@@ -485,14 +485,14 @@ section#home.page.active {
 
 .form-box.login .form-details {
     background: linear-gradient(rgba(226, 24, 24, 0.85), rgba(141, 13, 13, 0.9)), 
-                url('donate.jpg');
+                url('resources/donate.jpg');
     background-size: cover;
     background-position: center;
 }
 
 .form-box.signup .form-details {
     background: linear-gradient(rgba(226, 24, 24, 0.85), rgba(141, 13, 13, 0.9)), 
-                url('signup.jpg');
+                url('resources/signup.jpg');
     background-size: cover;
     background-position: center;
 }
