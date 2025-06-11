@@ -299,6 +299,12 @@ menuItems.forEach(item => {
                     logoutModal.style.display = 'none';
                 });
             }
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape' && logoutModal.style.display === 'flex') {
+                    logoutModal.style.display = 'none';
+                }
+            });
         }
     }
     
