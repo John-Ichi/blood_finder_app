@@ -92,7 +92,7 @@ if(isset($_POST['submit_request'])) {
 
     echo "
     <script>
-        alert('The selected donor has been notified of your request via email. Please contact the donor via their phone number for urgent requests.');
+        alert('The selected donor has been notified of your request via email.');
         window.location.href = 'donors.php';
     </script>";
 }
@@ -102,19 +102,17 @@ if(isset($_POST['submit_request'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LifeLink</title>
+    <title>Request Donor</title>
     <link rel="stylesheet" href="request-donor.css">
     <link rel="icon" href="resources/heartbeat-solid.svg">
 </head>
 <body>
-
-    <div class="header">
-        <div class="header-content">
-            <i class="fas fa-envelope-medical"></i>
-            <h1>Request Donor</h1>
+        <div class="header">
+            <div class="header-content">
+                <i class="fas fa-envelope-medical"></i>
+                <h1>Request Donor</h1>
+            </div>
         </div>
-    </div>
-
     
     <form method="POST" autocomplete="off">
         <div class="form-field">
@@ -130,7 +128,7 @@ if(isset($_POST['submit_request'])) {
                 <i class="fas fa-phone"></i>
                 Contact Number:
             </label>
-            <input type="text" name="rq_number" id="rq_number" placeholder="Enter your phone number..." required>
+            <input type="text" name="rq_number" id="rq_number" placeholder="09xxxxxxxxx" required>
         </div>
 
         <div class="form-field">
@@ -157,10 +155,15 @@ if(isset($_POST['submit_request'])) {
             <textarea name="rq_desc" id="rq_desc" placeholder="Briefly describe your request..."></textarea>
         </div>
 
+        <div class="checkbox-container">
+            <input type="checkbox" name="urgent" id="urgent" value="1">
+            <label for="urgent">Mark as URGENT</label>
+        </div>
+
         <div class="form-field">
             <label for="rq_loc">
                 <i class="fas fa-hospital"></i>
-                Select Affiliated Healthcare Institution (Leave Blank if None):
+                Select affiliated healthcare institution (leave blank if none):
             </label>
             <select name="rq_loc" id="rq_loc">
                 <option value="" selected></option>
@@ -171,19 +174,13 @@ if(isset($_POST['submit_request'])) {
         <div class="form-field">
             <label for="point_of_donation">
                 <i class="fas fa-map-marker-alt"></i>
-                Point of Donation:
+                Point of donation:
             </label>
             <input type="text" name="point_of_donation" id="point_of_donation" placeholder="Where should the donor go to donate?" required>
-        </div>
-
-        <div class="checkbox-container">
-            <input type="checkbox" name="urgent" id="urgent" value="1">
-            <label for="urgent">Mark as URGENT</label>
         </div>
 
         <button type="submit" name="submit_request">Submit Request</button>
         <a href="donors.php">Return to donors</a>
     </form>
-
 </body>
 </html>

@@ -90,7 +90,7 @@ form {
 }
 
 .form-field label i {
-    color: #3498db;
+    color: #e74c3c;
     width: 16px;
     text-align: center;
 }
@@ -115,7 +115,7 @@ input[type="email"]:focus,
 select:focus,
 textarea:focus {
     outline: none;
-    border-color: #3498db;
+    border-color: #e74c3c;
     background-color: white;
     box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
 }
