@@ -27,10 +27,6 @@ body {
     padding: 0;
 }
 
-fieldset {
-    border: none;
-}
-
 /* Header/Navigation Styles */
 .header {
     display: flex;
@@ -258,21 +254,21 @@ fieldset {
 
 .form-box.login .form-details {
     background: linear-gradient(rgba(226, 24, 24, 0.85), rgba(141, 13, 13, 0.9)), 
-                url('resources/donate.jpg');
+                url('donate.jpg');
     background-size: cover;
     background-position: center;
 }
 
 .form-box.signup .form-details {
     background: linear-gradient(rgba(226, 24, 24, 0.85), rgba(141, 13, 13, 0.9)), 
-                url('resources/signup.jpg');
+                url('signup.jpg');
     background-size: cover;
     background-position: center;
 }
 
 .form-box.forgot .form-details {
     background: linear-gradient(rgba(226, 24, 24, 0.85), rgba(141, 13, 13, 0.9)), 
-                url('resources/donate.jpg'); 
+                url('donate.jpg'); 
     background-size: cover;
     background-position: center;
     color: white;
@@ -949,18 +945,19 @@ button.btn.btn-sm.btn-outline.view-details {
 
 /* Success/Error Button Variants */
 .btn-accept, .btn-approve, .btn-complete {
-    background-color: #4caf50;
+    background-color: #4CAF50;
     color: white;
     padding: 8px 15px;
     border: none;
     border-radius: var(--radius);
-    cursor: pointer;    
+    cursor: pointer;
     transition: var(--transition);
     font-size: 0.9rem;
     display: flex;
     align-items: center;
     gap: 5px;
 }
+
 
 .btn-accept:hover, .btn-approve:hover, .btn-complete:hover {
     background-color: #3e8e41;
@@ -977,7 +974,7 @@ button.btn.btn-sm.btn-outline.view-details {
 }
 
 .btn-decline, .btn-reject, .btn-cancel {
-    background-color: #f44336;
+    background-color: #F44336;
     color: white;
     padding: 8px 15px;
     border: none;
@@ -1058,6 +1055,36 @@ button:hover{
     transition: var(--transition);
     transform: translateY(-2px);
 }
+
+.close-modal{
+    background-color: #d32f2f;
+    color: white;
+    cursor: pointer;
+    border-width: initial;
+    border-style: none;
+    border-color: initial;
+    border-image: initial;
+    padding: 0.5rem 1rem;
+    margin-top: 10px;
+    border-radius: var(--radius);
+    transition: var(--transition);
+    transform: translateY(-2px);
+}
+
+.close-modal:hover {
+    background-color: #d32f2f;
+    color: white;
+    cursor: pointer;
+    border-width: initial;
+    border-style: none;
+    border-color: initial;
+    border-image: initial;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius);
+    transition: var(--transition);
+    transform: translateY(-2px);
+}
+
 
 /* Card Components */
 .card {
@@ -1378,10 +1405,6 @@ button:hover{
     justify-content: center;
 }
 
-button.filter-btn {
-    color: buttontext;
-}
-
 .filter-btn {
     padding: 0.5rem 1rem;
     background-color: var(--secondary);
@@ -1423,6 +1446,95 @@ button.filter-btn {
 }
 
 /* Forms */
+.parent-container {
+    display: flex;
+    justify-content: center; 
+    align-items: center; 
+    min-height: 100vh; 
+}
+
+.form-container {
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 750px;
+    overflow: hidden;
+}
+
+.form-header {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    color: white;
+    text-align: center;
+    padding: 25px 30px;
+}
+
+.form-header h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+.form-header p {
+    margin: 5px 0 0 0;
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.form-content {
+    padding: 30px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.form-group label {
+    display: block;
+    margin-left: 30px;
+    margin-bottom: 8px;
+    color: #555;
+    font-weight: 500;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px 15px 12px 40px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+.form-group input:focus {
+    border-color: #d32f2f;
+    outline: none;
+}
+
+.form-group i {
+    position: absolute;
+    left: 5px;
+    color: #d32f2f;
+}
+
+button[type="submit"] {
+    background-color: #d32f2f;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 500;
+    width: 100%;
+    transition: background-color 0.3s;
+}
+
+button[type="submit"]:hover {
+    background-color: #b71c1c;
+}
+
 .form-group {
     margin-bottom: 1rem;
 }
@@ -1588,8 +1700,6 @@ tr.critical {
 .request-item {
     border-left: 4px solid #4caf50;
     position: relative;
-    display: flex;
-    flex-direction: column;
 }
 
 .request-item:hover, .appointment-item:hover {
@@ -1637,13 +1747,12 @@ tr.critical {
     background-color: white;
     border-radius: var(--radius);
     padding: 20px;
-    margin: 0;
-    width: 100%;
+    margin-left: -5px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     display: flex;
-    flex: 1 1 100%;
-    min-width: 100%;
+    justify-content: space-between;
     align-items: center;
+    margin-bottom: 15px;
     transition: var(--transition);
 }
 
@@ -1665,7 +1774,10 @@ tr.critical {
 
 .appointment-info p {
     margin: 0.3rem 0;
+    font-size: 0.9rem;
     color: var(--text);
+    display: flex;
+    align-items: center;
 }
 
 .appointment-info i {
@@ -1923,6 +2035,14 @@ tr.critical {
     }
 }
 
+.modal-content h2 {
+    color: var(--primary);
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid #eee;
+    font-size: 1.4rem;
+}
+
 .close-modal {
     position: absolute;
     top: 5px;
@@ -1936,44 +2056,6 @@ tr.critical {
 .modal-actions {
     gap: 10px;
     margin-top: 1.5rem;
-}
-
-.modal-content h2 {
-    color: var(--primary);
-    margin-bottom: 1.2rem;
-    padding-bottom: 0.8rem;
-    border-bottom: 1px solid #eee;
-    font-size: 1.4rem;
-}
-
-.close-modal{
-    background-color: #d32f2f;
-    color: white;
-    cursor: pointer;
-    border-width: initial;
-    border-style: none;
-    border-color: initial;
-    border-image: initial;
-    padding: 0.5rem 1rem;
-    margin-top: 10px;
-    border-radius: var(--radius);
-    transition: var(--transition);
-    transform: translateY(-2px);
-}
-
-.close-modal:hover {
-    background-color: #d32f2f;
-    color: white;
-    cursor: pointer;
-    border-width: initial;
-    border-style: none;
-    border-color: initial;
-    border-image: initial;
-    padding: 0.5rem 1rem;
-    margin: 10px 5px 5px 5px;
-    border-radius: var(--radius);
-    transition: var(--transition);
-    transform: translateY(-2px);
 }
 
 /* Donation Details Modal */
@@ -2416,22 +2498,6 @@ tr.critical {
     .donation-form-card {
         padding: 1rem;
     }
-
-    .appointment-item {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .appointment-actions {
-        margin-left: 0;
-        margin-top: 15px;
-        width: 100%;
-        justify-content: flex-end;
-    }
-
-    .modal-content {
-        padding: 20px 15px;
-    }
     
     .donation-form-card .card-header h2 {
         font-size: 1.2rem;
@@ -2445,6 +2511,22 @@ tr.critical {
         width: 100%;
     }
     
+    .appointment-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .appointment-actions {
+        margin-left: 0;
+        margin-top: 15px;
+        width: 100%;
+        justify-content: flex-end;
+    }
+    
+    .modal-content {
+        padding: 20px 15px;
+    }
+
     .filter-container {
         flex-direction: column;
         gap: 0.4rem;
