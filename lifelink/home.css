@@ -754,13 +754,121 @@ body.menu-open {
     color: white;
 }
 
+@media (max-width: 1200px) {
+  .container {
+    padding: 0 1rem;
+  }
+  .hero {
+    padding: 4rem 2rem;
+  }
+}
+@media (max-width: 992px) {
+  .hero {
+    flex-direction: column;
+    padding: 3rem 1rem;
+    text-align: center;
+  }
+  .hero-content {
+    max-width: 100%;
+    margin-bottom: 2rem;
+  }
+  .search-container {
+    margin-bottom: 2rem;
+  }
+}
 @media (max-width: 768px) {
-    .nav-links {
-        display: none;
-    }
-    
-    .ham-menu {
-        display: flex;
-    }
+  .container {
+    padding: 0 0.5rem;
+  }
+  .header {
+    padding: 0 1rem;
+    height: 56px;
+  }
+  .hero {
+    flex-direction: column;
+    padding: 2rem 0.5rem;
+    text-align: center;
+  }
+  .hero-content h1 {
+    font-size: 2rem;
+  }
+  .hero-content p {
+    font-size: 1rem;
+  }
+  .form-popup {
+    width: 100vw;
+    min-width: unset;
+    left: 0;
+    top: 0;
+    border-radius: 0;
+    padding: 0.5rem;
+  }
+  .form-box {
+    min-width: unset;
+    width: 100%;
+    padding: 1rem 0.5rem;
+  }
+  .form-details h2 {
+    font-size: 1.2rem;
+  }
+  .form-content h2 {
+    font-size: 1.2rem;
+  }
+  .form-box .form-details p {
+    font-size: 0.95rem;
+  }
+  .form-box form button {
+    font-size: 1rem;
+    padding: 12px 0;
+  }
+  .input-field input {
+    font-size: 1rem;
+    padding: 10px 8px;
+  }
+  .btn, .btn-large {
+    width: 100%;
+    padding: 0.8rem 0;
+    font-size: 1rem;
+  }
+  .how-it-works {
+    padding: 2rem 0.5rem;
+  }
+  .section-title h2 {
+    font-size: 1.3rem;
+  }
+  .steps {
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  .step {
+    width: 100%;
+    min-width: unset;
+    margin-bottom: 1rem;
+  }
+}
+@media (max-width: 480px) {
+  .header {
+    padding: 0 0.3rem;
+    height: 48px;
+  }
+  .logo span {
+    font-size: 1rem;
+  }
+  .hero {
+    padding: 1rem 0.2rem;
+  }
+  .hero-content h1 {
+    font-size: 1.1rem;
+  }
+  .form-popup {
+    padding: 0.2rem;
+  }
+  .form-box {
+    padding: 0.5rem 0.2rem;
+  }
+  .btn, .btn-large {
+    font-size: 0.95rem;
+    padding: 0.7rem 0;
+  }
 }
 

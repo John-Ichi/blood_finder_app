@@ -43,41 +43,66 @@ if (isset($_POST['hospital_signup'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LifeLink</title>
     <link rel="icon" href="resources/heartbeat-solid.svg">
-    <style>
-        .form-container {
-            margin: 20px;
-            padding: 20px;
-            border: 1px solid #ccc;
-            width: 300px;
-            float: left;
-        }
-        .error { color: red; }
-        .success { color: green; }
-        .clear { clear: both; }
-    </style>
+    <link rel="stylesheet" type="text/css" href="hospital-login.css">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:600&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a81368914c.js"></script>
 </head>
 <body>
-
-    <h1>LifeLink</h1>
-    
-    <div class="form-container">
-        <h2>Create Account For Hospital</h2>
-        <?php if (isset($signup_error)) echo "<p class='error'>$signup_error</p>"; ?>
-        
-        <form method="POST">
-            Email: <br><input type="email" name="hospital_email" required><br>
-            Password: <br><input type="password" name="password" required><br>
-            Confirm Password: <br><input type="password" name="confirm_password" required><br>
-            <button type="submit" name="hospital_signup">Confirm</button>
-        </form>
-        <a href="hospital-login.php">Login</a>
+    <div class="lifelink-header">
+        <img src="resources/heartbeat-solid.svg" alt="LifeLink Logo" class="lifelink-logo">
+        <span class="lifelink-title">LifeLink</span>
     </div>
-
+    <img class="wave" src="wave.svg">
+    <div class="container">
+        <div class="img">
+            <img src="logo.svg">
+        </div>
+        <div class="login-content signup-content">
+            <form method="POST">
+                <img src="surgeon-doctor.svg">
+                <h2 class="title">Sign Up</h2>
+                <p class="form-note">Create your hospital account and join the LifeLink network.</p>
+                <?php if(isset($signup_error)) echo "<p class='error' style='color:red;text-align:center;'>$signup_error</p>"; ?>
+                <?php if(isset($signup_success)) echo "<p class='success' style='color:green;text-align:center;'>$signup_success</p>"; ?>
+                <div class="input-div one">
+                    <div class="i">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="div">
+                        <h5>Email</h5>
+                        <input type="email" class="input" name="hospital_email" required>
+                    </div>
+                </div>
+                <div class="input-div pass">
+                    <div class="i"> 
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <div class="div">
+                        <h5>Password</h5>
+                        <input type="password" class="input" name="password" required>
+                    </div>
+                </div>
+                <div class="input-div pass">
+                    <div class="i"> 
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <div class="div">
+                        <h5>Confirm Password</h5>
+                        <input type="password" class="input" name="confirm_password" required>
+                    </div>
+                </div>
+                <input type="submit" class="btn" name="hospital_signup" value="Sign Up">
+                <div style="margin-top:10px;text-align:center;">
+                    <a href="hospital-login.php">Login</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <script type="text/javascript" src="hospital-login.js"></script>
     <script>
         if (window.history.replaceState) {
             window.history.replaceState(null, null, window.location.href);
         }
     </script>
-
 </body>
 </html>
